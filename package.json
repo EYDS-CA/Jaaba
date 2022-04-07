@@ -8,7 +8,6 @@
     "build": "remix build",
     "dev": "remix dev",
     "start": "remix-serve build",
-    "precommit": "lint-staged",
     "format": "prettier --write **/*.{tsx,ts,json}",
     "prepare": "husky install"
   },
