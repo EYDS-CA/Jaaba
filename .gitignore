@@ -1,9 +1,11 @@
 node_modules
 
 /.cache
-/build
+/server/index.js
 /public/build
+preferences.arc
+sam.json
+sam.yaml
 .env
-.DS_Store
 
 .eslintcache
