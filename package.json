@@ -35,7 +35,7 @@
   "lint-staged": {
     "*.{tsx,ts}": [
       "prettier --write",
-      "eslint --cache --fix"
+      "eslint --cache --fix --max-warnings=0"
     ]
   }
 }
