@@ -2,9 +2,9 @@
 // should have a loader that calls the jira loader
 // form goes here
 
-import { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
-import { CreateTicket, GetMetaData } from "./jira";
+import type { ActionFunction } from '@remix-run/node';
+import { Form } from '@remix-run/react';
+import { CreateTicket } from './jira';
 
 // REPLACE contents of Index() with:
 //LOADER
@@ -15,7 +15,7 @@ import { CreateTicket, GetMetaData } from "./jira";
 
 export const action: ActionFunction = async ({ request }) => {
   switch (request.method) {
-    case "POST": {
+    case 'POST': {
       return await CreateTicket();
     }
   }
@@ -23,8 +23,8 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Index() {
   return (
-    <Form method="post">
-      <button type="submit">Create Jira Ticket</button>
+    <Form method='post'>
+      <button type='submit'>Create Jira Ticket</button>
     </Form>
   );
 }

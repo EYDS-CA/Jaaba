@@ -1,14 +1,14 @@
 // TODO: CRUD operations go here
 
-import { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { btoa } from "@remix-run/node/base64";
-import dummyData from "dummy.json";
+import type { ActionFunction, LoaderFunction } from '@remix-run/node';
+import { btoa } from '@remix-run/node/base64';
+import dummyData from 'dummy.json';
 
 // /put/post/get/delete RESTful architecture
 export const action: ActionFunction = async ({ request }) => {
   switch (request.method) {
-    case "POST": {
-      console.log("hey");
+    case 'POST': {
+      console.log('hey');
       return await CreateTicket();
     }
   }
@@ -20,32 +20,30 @@ export const loader: LoaderFunction = async () => {
 
 export const GetMetaData = async () => {
   const res = await fetch(
-    "https://jaaba.atlassian.net/rest/api/3/issue/createmeta",
+    'https://jaaba.atlassian.net/rest/api/3/issue/createmeta',
     {
-      method: "GET",
+      method: 'GET',
       headers: new Headers({
         Authorization:
-          "Basic " +
+          'Basic ' +
           btoa(`${process.env.JIRA_USERNAME}:${process.env.JIRA_API_KEY}`),
       }),
-    }
+    },
   );
 
   const response = await res.json();
 
-  return { projectId: response.projects[0].id, issueType: "100001" };
+  return { projectId: response.projects[0].id, issueType: '100001' };
 };
 
 export const CreateTicket = async () => {
-  const meta = await GetMetaData();
-
-  const res = await fetch("https://jaaba.atlassian.net/rest/api/3/issue", {
-    method: "POST",
+  const res = await fetch('https://jaaba.atlassian.net/rest/api/3/issue', {
+    method: 'POST',
     headers: new Headers({
       Authorization:
-        "Basic " +
+        'Basic ' +
         btoa(`${process.env.JIRA_USERNAME}:${process.env.JIRA_API_KEY}`),
-      "content-type": "application/json",
+      'content-type': 'application/json',
     }),
     body: JSON.stringify(dummyData),
   });
