@@ -11,6 +11,8 @@
     "dev": "remix build && run-p dev:*",
     "start": "cross-env NODE_ENV=production arc sandbox",
     "format": "prettier --write **/*.{tsx,ts,json}",
+    "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
+    "typecheck": "tsc -b",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -36,6 +38,11 @@
   "engines": {
     "node": ">=14"
   },
+  "eslintIgnore": [
+    "/node_modules",
+    "/server/index.js",
+    "/public/build"
+  ],
   "lint-staged": {
     "*.{tsx,ts}": [
       "prettier --write",
