@@ -4,7 +4,7 @@
 
 import type { ActionFunction } from '@remix-run/node';
 import { Form } from '@remix-run/react';
-import { CreateTicket } from './jira';
+import { manager } from '~/managers';
 
 // REPLACE contents of Index() with:
 //LOADER
@@ -16,7 +16,7 @@ import { CreateTicket } from './jira';
 export const action: ActionFunction = async ({ request }) => {
   switch (request.method) {
     case 'POST': {
-      return await CreateTicket();
+      return await manager.CreateTicket("title", "body");
     }
   }
 };
