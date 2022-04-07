@@ -1,7 +1,6 @@
 import { btoa } from '@remix-run/node/base64';
 import { JiraTicket } from '~/dto/jira-ticket.dto';
 
-
 export const GetMetaData = async () => {
   const res = await fetch(
     'https://jaaba.atlassian.net/rest/api/3/issue/createmeta',
@@ -21,7 +20,6 @@ export const GetMetaData = async () => {
 };
 
 export const CreateTicket = async (title: string, body: string) => {
-
   const jiraTicket = new JiraTicket(title, body);
   const res = await fetch('https://jaaba.atlassian.net/rest/api/3/issue', {
     method: 'POST',
