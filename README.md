@@ -12,6 +12,13 @@ npm run dev
 
 This starts your app in development mode, rebuilding assets on file changes.
 
+### Environment
+
+If using Jira, to find your environment values:
+1. Go to https://<project>.atlassian.net/rest/api/3/issue/createmeta to find your project ID
+2. Create an API key on Jira
+3. Set BACKEND_SERVICE=jira
+
 ## Deployment
 
 First, build your app for production:
