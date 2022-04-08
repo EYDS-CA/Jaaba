@@ -10,6 +10,7 @@
     "dev:arc": "cross-env NODE_ENV=development arc sandbox",
     "dev": "remix build && run-p dev:*",
     "start": "cross-env NODE_ENV=production arc sandbox",
+    "format:check": "prettier --check **/*.{tsx,ts,json}",
     "format": "prettier --write **/*.{tsx,ts,json}",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "typecheck": "tsc -b",
