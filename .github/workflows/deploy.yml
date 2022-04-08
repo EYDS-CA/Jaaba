@@ -87,7 +87,7 @@ jobs:
         run: npm i -g @architect/architect
 
       - name: 🚀 Staging Deploy
-        if: github.ref == 'refs/heads/main'
+        # if: github.ref == 'refs/heads/main'
         run: arc deploy --staging --prune
         env:
           CI: true
