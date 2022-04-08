@@ -98,7 +98,7 @@ jobs:
 
   deploy:
     name: 🚀 Deploy
-    # needs: [lint, typecheck, format]
+    needs: [lint, typecheck, format]
     runs-on: ubuntu-latest
 
     steps:
@@ -139,7 +139,7 @@ jobs:
         run: yarn global add @architect/architect
 
       - name: 🚀 Staging Deploy
-        # if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main'
         run: |
           arc deploy staging --prune
           arc env --add --env staging JIRA_USERNAME ${{ secrets.JIRA_USERNAME }}
