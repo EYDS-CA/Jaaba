@@ -47,7 +47,10 @@ export const CreateTicket = async (
 
 export const GetTickets = async () => {
   const res = await fetch(
-    API_BASE_URL + `search?jql=project=${process.env.JIRA_PROJECT_NAME}`,
+    // yeah filtering by Task is not working, let's just move on
+    // https://community.atlassian.com/t5/Jira-questions/Jira-API-JQL-Search-for-issues-result-only-of-specific-issuetype/qaq-p/1139155
+    API_BASE_URL +
+      `search?jql=project=${process.env.JIRA_PROJECT_NAME}&issuetype=Task`,
     {
       method: 'GET',
       headers: new Headers({
@@ -60,6 +63,8 @@ export const GetTickets = async () => {
   );
   // res has startAt, maxResults, and total (as in length, count) fields as well
   const data = await res.json();
-  const issues = data.issues.map((issue: any) => JiraTicket.parseJSON(issue));
+  const issues = data.issues
+    .filter((issue: any) => issue.fields.issuetype.subtask === false)
+    .map((issue: any) => JiraTicket.parseJSON(issue));
   return [issues, data.total];
 };
