@@ -30,10 +30,8 @@ export default function App() {
       </head>
       <body className='h-full flex flex-col'>
         <Nav />
-
         <UserBar />
         <Outlet />
-
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

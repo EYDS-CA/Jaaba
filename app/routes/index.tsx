@@ -2,7 +2,7 @@
 // should have a loader that calls the jira loader
 // form goes here
 
-import type { ActionFunction, LoaderFunction} from '@remix-run/node';
+import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { manager } from '~/managers';
 
