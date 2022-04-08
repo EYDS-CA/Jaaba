@@ -8,7 +8,8 @@ import { manager } from '~/managers';
 export const action: ActionFunction = async ({ request }) => {
   switch (request.method) {
     case 'POST': {
-      return await manager.CreateTicket('title', 'body');
+      const parentId = '';
+      return await manager.CreateTicket('title', 'body', parentId);
     }
   }
 };

@@ -14,9 +14,11 @@ import { manager } from '~/managers';
 // BUTTON
 
 export const action: ActionFunction = async ({ request }) => {
+  const data = await request.formData();
+  const parentId = data.get('parentId') ?? '';
   switch (request.method) {
     case 'POST': {
-      return await manager.CreateTicket('title', 'body');
+      return await manager.CreateTicket('title', 'body', parentId.toString());
     }
   }
 };

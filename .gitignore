@@ -8,7 +8,7 @@ preferences.arc
 sam.json
 sam.yaml
 .env
-
+.DS_Store
 .eslintcache
 
 /app/styles/tailwind.css

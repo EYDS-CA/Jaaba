@@ -19,6 +19,11 @@ export const JobOpenings: React.FC = () => {
         {tickets.map((ticket: any) => {
           return (
             <Form method='post' key={ticket.key}>
+              <input type='hidden' name='parentId' value={ticket.issueId} />
+              <article>
+                <h1>{ticket.title}</h1>
+                <div>{ticket.description}</div>
+              </article>
               <h2>{ticket.key}</h2>
               <button
                 type='submit'

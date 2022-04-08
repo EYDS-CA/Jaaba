@@ -1,6 +1,8 @@
 import { btoa } from '@remix-run/node/base64';
 import { JiraTicket } from '~/dto/jira-ticket.dto';
 
+const API_BASE_URL = `https://${process.env.JIRA_PROJECT_NAME}.atlassian.net/rest/api/3/`;
+
 export const GetMetaData = async () => {
   const res = await fetch(
     'https://jaaba.atlassian.net/rest/api/3/issue/createmeta',
@@ -16,12 +18,20 @@ export const GetMetaData = async () => {
 
   const response = await res.json();
 
-  return { projectId: response.projects[0].id, issueType: '100001' };
+  return {
+    projectId: response.projects[0].id,
+    issueType: JiraTicket.ISSUE_TYPES.TASK,
+  };
 };
 
-export const CreateTicket = async (title: string, body: string) => {
-  const jiraTicket = new JiraTicket(title, body);
-  const res = await fetch('https://jaaba.atlassian.net/rest/api/3/issue', {
+export const CreateTicket = async (
+  title: string,
+  body: string,
+  parentId: string,
+) => {
+  const jiraTicket = new JiraTicket(title, body, parentId);
+
+  const res = await fetch(API_BASE_URL + 'issue', {
     method: 'POST',
     headers: new Headers({
       Authorization:
@@ -50,5 +60,6 @@ export const GetTickets = async () => {
   );
   // res has startAt, maxResults, and total (as in length, count) fields as well
   const data = await res.json();
-  return [data.issues, data.total];
+  const issues = data.issues.map((issue: any) => JiraTicket.parseJSON(issue));
+  return [issues, data.total];
 };
