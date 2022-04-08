@@ -9,6 +9,8 @@ import {
 } from '@remix-run/react';
 import tailwindStylesheetUrl from './styles/tailwind.css';
 
+import { Nav, UserBar } from './components';
+
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
   title: 'JaaBa',
@@ -21,12 +23,14 @@ export function links() {
 
 export default function App() {
   return (
-    <html lang='en' className='h-full bg-teal-700'>
+    <html lang='en' className='h-full bg-gray-200'>
       <head>
         <Meta />
         <Links />
       </head>
-      <body className='h-full'>
+      <body className='h-full flex flex-col'>
+        <Nav />
+        <UserBar />
         <Outlet />
         <ScrollRestoration />
         <Scripts />

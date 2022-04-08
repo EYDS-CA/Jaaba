@@ -2,9 +2,8 @@
 // should have a loader that calls the jira loader
 // form goes here
 
-import type { ActionFunction } from '@remix-run/node';
-import { Form, useTransition } from '@remix-run/react';
-import { Spinner } from '~/components';
+import type { ActionFunction, LoaderFunction } from '@remix-run/node';
+import { redirect } from '@remix-run/node';
 import { manager } from '~/managers';
 
 // REPLACE contents of Index() with:
@@ -22,23 +21,6 @@ export const action: ActionFunction = async ({ request }) => {
   }
 };
 
-export default function Index() {
-  const transition = useTransition();
-
-  const isSubmitting = transition.state === 'submitting';
-
-  return (
-    <Form
-      method='post'
-      className='flex justify-center items-center h-full w-full'
-    >
-      <button
-        type='submit'
-        className='p-2 rounded bg-slate-100 shadow-md font-bold flex disabled:opacity-70'
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? <Spinner /> : 'Create Jira Ticket'}
-      </button>
-    </Form>
-  );
-}
+export const loader: LoaderFunction = async () => {
+  return redirect('/applications');
+};
