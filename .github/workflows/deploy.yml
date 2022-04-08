@@ -34,7 +34,7 @@ jobs:
         run: npm run lint
 
   typecheck:
-    name: ʦ TypeScript
+    name: ʦ Type Checks
     runs-on: ubuntu-latest
     steps:
       - name: 🛑 Cancel Previous Runs
@@ -76,6 +76,7 @@ jobs:
         run: npm run format:check
 
   deploy:
+    name: 🚀 Deploy
     needs: [lint, typecheck, format]
     runs-on: ubuntu-latest
 
@@ -116,7 +117,6 @@ jobs:
           arc env --add --env staging JIRA_USERNAME ${{ secrets.JIRA_USERNAME }}
           arc env --add --env staging JIRA_API_KEY ${{ secrets.JIRA_API_KEY }}
           arc env --add --env staging BACKEND_SERVICE ${{ env.BACKEND_SERVICE }}
-
         env:
           CI: true
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
