@@ -67,7 +67,10 @@ jobs:
         with:
           node-version: 14
 
-      - name: 🔎 Type check
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+
+      - name: 🔎 Format check
         run: npm run format:check
 
   deploy:
