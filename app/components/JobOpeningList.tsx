@@ -2,10 +2,12 @@ import { Form, useTransition } from '@remix-run/react';
 import { Fragment } from 'react';
 import { Spinner } from './Spinner';
 
-export const JobOpenings: React.FC = () => {
-    const [tickets, count] = [
-        [{key: "temp"}], 1
-    ];
+interface IProps {
+  tickets: any[];
+  count: number;
+}
+
+export const JobOpeningList: React.FC<IProps> = ({ tickets, count }) => {
   const transition = useTransition();
 
   console.log(tickets);
