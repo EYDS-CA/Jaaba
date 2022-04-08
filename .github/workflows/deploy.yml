@@ -27,11 +27,18 @@ jobs:
         with:
           node-version: 14
 
-      - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
+      - uses: actions/cache@v2
+        name: Cache yarn
+        with:
+          path: ./.yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
+          restore-keys: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
+
+      - name: Install dependencies
+        run: yarn
 
       - name: 🔬 Lint
-        run: npm run lint
+        run: yarn lint
 
   typecheck:
     name: ʦ Type Checks
@@ -48,11 +55,18 @@ jobs:
         with:
           node-version: 14
 
-      - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
+      - uses: actions/cache@v2
+        name: Cache yarn
+        with:
+          path: ./.yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
+          restore-keys: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
+
+      - name: Install dependencies
+        run: yarn
 
       - name: 🔎 Type check
-        run: npm run typecheck --if-present
+        run: yarn typecheck
 
   format:
     name: 🦋 Prettier
@@ -69,15 +83,22 @@ jobs:
         with:
           node-version: 14
 
-      - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
+      - uses: actions/cache@v2
+        name: Cache yarn
+        with:
+          path: ./.yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
+          restore-keys: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
+
+      - name: Install dependencies
+        run: yarn
 
       - name: 🔎 Format check
-        run: npm run format:check
+        run: yarn format:check
 
   deploy:
     name: 🚀 Deploy
-    needs: [lint, typecheck, format]
+    # needs: [lint, typecheck, format]
     runs-on: ubuntu-latest
 
     steps:
@@ -99,21 +120,28 @@ jobs:
           echo "GH actor:   ${{ github.actor }}"
           echo "SHA:        ${{ github.sha }}"
           VER=`node --version`; echo "Node ver:   $VER"
-          VER=`npm --version`; echo "npm ver:    $VER"
+          VER=`yarn --version`; echo "yarn ver:    $VER"
 
-      - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
+      - uses: actions/cache@v2
+        name: Cache yarn
+        with:
+          path: ./.yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
+          restore-keys: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
+
+      - name: Install dependencies
+        run: yarn
 
       - name: 🏗 Build
         run: make build
 
       - name: 🛠 Install Arc
-        run: npm i -g @architect/architect
+        run: yarn global add @architect/architect
 
       - name: 🚀 Staging Deploy
         if: github.ref == 'refs/heads/main'
         run: |
-          arc deploy --staging --prune
+          arc deploy staging --prune
           arc env --add --env staging JIRA_USERNAME ${{ secrets.JIRA_USERNAME }}
           arc env --add --env staging JIRA_API_KEY ${{ secrets.JIRA_API_KEY }}
           arc env --add --env staging BACKEND_SERVICE ${{ env.BACKEND_SERVICE }}
