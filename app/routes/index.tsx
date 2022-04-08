@@ -3,7 +3,8 @@
 // form goes here
 
 import type { ActionFunction } from '@remix-run/node';
-import { Form } from '@remix-run/react';
+import { Form, useTransition } from '@remix-run/react';
+import { Spinner } from '~/components';
 import { manager } from '~/managers';
 
 // REPLACE contents of Index() with:
@@ -22,6 +23,10 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Index() {
+  const transition = useTransition();
+
+  const isSubmitting = transition.state === 'submitting';
+
   return (
     <Form
       method='post'
@@ -29,9 +34,10 @@ export default function Index() {
     >
       <button
         type='submit'
-        className='p-2 rounded bg-slate-100 shadow-md font-bold'
+        className='p-2 rounded bg-slate-100 shadow-md font-bold flex disabled:opacity-70'
+        disabled={isSubmitting}
       >
-        Create Jira Ticket
+        {isSubmitting ? <Spinner /> : 'Create Jira Ticket'}
       </button>
     </Form>
   );
