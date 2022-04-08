@@ -12,8 +12,27 @@ defaults:
 env:
   BACKEND_SERVICE: jira
 jobs:
+  install:
+    name: 🔽 Install Deps
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛑 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+
   lint:
     name: ⬣ ESLint
+    needs: [install]
     runs-on: ubuntu-latest
     steps:
       - name: 🛑 Cancel Previous Runs
@@ -35,6 +54,7 @@ jobs:
 
   typecheck:
     name: ʦ Type Checks
+    needs: [install]
     runs-on: ubuntu-latest
     steps:
       - name: 🛑 Cancel Previous Runs
@@ -56,6 +76,7 @@ jobs:
 
   format:
     name: 🦋 Prettier
+    needs: [install]
     runs-on: ubuntu-latest
     steps:
       - name: 🛑 Cancel Previous Runs
