@@ -34,3 +34,21 @@ export const CreateTicket = async (title: string, body: string) => {
 
   return res;
 };
+
+export const GetTickets = async () => {
+  const res = await fetch(
+    API_BASE_URL + `search?jql=project=${process.env.JIRA_PROJECT_NAME}`,
+    {
+      method: 'GET',
+      headers: new Headers({
+        Authorization:
+          'Basic ' +
+          btoa(`${process.env.JIRA_USERNAME}:${process.env.JIRA_API_KEY}`),
+        'content-type': 'application/json',
+      }),
+    },
+  );
+  // res has startAt, maxResults, and total (as in length, count) fields as well
+  const data = await res.json();
+  return [data.issues, data.total];
+};

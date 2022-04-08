@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from '@remix-run/react';
 
 const navLinks = [
-  { title: 'Job Search', path: '/', icon: faSearch },
+  { title: 'Job Search', path: '/openings', icon: faSearch },
   { title: 'My Job Applications', path: '/applications', icon: faTableList },
   { title: 'My Profile', path: '/', icon: faUser },
 ];
