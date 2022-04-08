@@ -110,13 +110,12 @@ jobs:
         run: npm i -g @architect/architect
 
       - name: 🚀 Staging Deploy
-        # if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main'
         run: |
           arc deploy --staging --prune
           arc env --add --env staging JIRA_USERNAME ${{ secrets.JIRA_USERNAME }}
           arc env --add --env staging JIRA_API_KEY ${{ secrets.JIRA_API_KEY }}
           arc env --add --env staging BACKEND_SERVICE ${{ env.BACKEND_SERVICE }}
-          arc env --add --env staging JIRA_PROJECT_ID placeholder
 
         env:
           CI: true
