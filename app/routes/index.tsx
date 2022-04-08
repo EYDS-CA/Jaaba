@@ -23,8 +23,16 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Index() {
   return (
-    <Form method='post'>
-      <button type='submit'>Create Jira Ticket</button>
+    <Form
+      method='post'
+      className='flex justify-center items-center h-full w-full'
+    >
+      <button
+        type='submit'
+        className='p-2 rounded bg-slate-100 shadow-md font-bold'
+      >
+        Create Jira Ticket
+      </button>
     </Form>
   );
 }
