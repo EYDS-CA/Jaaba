@@ -13,7 +13,7 @@
     "dev": "remix build && run-p dev:*",
     "start": "cross-env NODE_ENV=production arc sandbox",
     "format:check": "prettier --check **/*.{js,jsx,tsx,ts,json}",
-    "format": "prettier --write **/*.{js,jsx,tsx,ts,json}",
+    "format:write": "prettier --write **/*.{js,jsx,tsx,ts,json}",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "typecheck": "tsc -b",
     "prepare": "husky install"
