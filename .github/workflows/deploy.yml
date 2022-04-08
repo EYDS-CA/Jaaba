@@ -11,6 +11,7 @@ defaults:
 
 env:
   BACKEND_SERVICE: jira
+  JIRA_PROJECT_NAME: jaaba
 jobs:
   lint:
     name: ⬣ ESLint
@@ -145,6 +146,7 @@ jobs:
           arc env --add --env staging JIRA_USERNAME ${{ secrets.JIRA_USERNAME }}
           arc env --add --env staging JIRA_API_KEY ${{ secrets.JIRA_API_KEY }}
           arc env --add --env staging BACKEND_SERVICE ${{ env.BACKEND_SERVICE }}
+          arc env --add --env staging JIRA_PROJECT_NAME ${{ env.JIRA_PROJECT_NAME }}
         env:
           CI: true
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
