@@ -96,56 +96,56 @@ jobs:
       - name: 🔎 Format check
         run: yarn format:check
 
-  # deploy:
-  #   name: 🚀 Deploy
-  #   needs: [lint, typecheck, format]
-  #   runs-on: ubuntu-latest
+  deploy:
+    name: 🚀 Deploy
+    needs: [lint, typecheck, format]
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - name: 🛑 Cancel Previous Runs
-  #       uses: styfle/cancel-workflow-action@0.9.1
+    steps:
+      - name: 🛑 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
 
-  #     - name: ⬇️ Checkout repo
-  #       uses: actions/checkout@v3
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
 
-  #     - name: ⎔ Setup node
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: 14
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14
 
-  #     - name: 👀 Env
-  #       run: |
-  #         echo "Event name: ${{ github.event_name }}"
-  #         echo "Git ref:    ${{ github.ref }}"
-  #         echo "GH actor:   ${{ github.actor }}"
-  #         echo "SHA:        ${{ github.sha }}"
-  #         VER=`node --version`; echo "Node ver:   $VER"
-  #         VER=`yarn --version`; echo "yarn ver:    $VER"
+      - name: 👀 Env
+        run: |
+          echo "Event name: ${{ github.event_name }}"
+          echo "Git ref:    ${{ github.ref }}"
+          echo "GH actor:   ${{ github.actor }}"
+          echo "SHA:        ${{ github.sha }}"
+          VER=`node --version`; echo "Node ver:   $VER"
+          VER=`yarn --version`; echo "yarn ver:    $VER"
 
-  #     - uses: actions/cache@v2
-  #       name: Cache yarn
-  #       with:
-  #         path: ./.yarn/cache
-  #         key: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
-  #         restore-keys: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
+      - uses: actions/cache@v2
+        name: Cache yarn
+        with:
+          path: ./.yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
+          restore-keys: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
 
-  #     - name: Install dependencies
-  #       run: yarn
+      - name: Install dependencies
+        run: yarn
 
-  #     - name: 🏗 Build
-  #       run: make build
+      - name: 🏗 Build
+        run: make build
 
-  #     - name: 🛠 Install Arc
-  #       run: yarn global add @architect/architect
+      - name: 🛠 Install Arc
+        run: yarn global add @architect/architect
 
-  #     - name: 🚀 Staging Deploy
-  #       if: github.ref == 'refs/heads/main'
-  #       run: |
-  #         arc deploy staging --prune
-  #         arc env --add --env staging JIRA_USERNAME ${{ secrets.JIRA_USERNAME }}
-  #         arc env --add --env staging JIRA_API_KEY ${{ secrets.JIRA_API_KEY }}
-  #         arc env --add --env staging BACKEND_SERVICE ${{ env.BACKEND_SERVICE }}
-  #       env:
-  #         CI: true
-  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: 🚀 Staging Deploy
+        if: github.ref == 'refs/heads/main'
+        run: |
+          arc deploy staging --prune
+          arc env --add --env staging JIRA_USERNAME ${{ secrets.JIRA_USERNAME }}
+          arc env --add --env staging JIRA_API_KEY ${{ secrets.JIRA_API_KEY }}
+          arc env --add --env staging BACKEND_SERVICE ${{ env.BACKEND_SERVICE }}
+        env:
+          CI: true
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
