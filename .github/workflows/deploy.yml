@@ -105,7 +105,7 @@ jobs:
         uses: bahmutov/npm-install@v1
 
       - name: 🏗 Build
-        run: npm run build
+        run: make build
 
       - name: 🛠 Install Arc
         run: npm i -g @architect/architect
