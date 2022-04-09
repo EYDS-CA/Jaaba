@@ -1,49 +1,32 @@
-import { Form } from '@remix-run/react';
+import { Form, Link } from '@remix-run/react';
 import type { IJobPosting } from '~/dto/jira-ticket.dto';
-
-// const JiraDescriptionElement: React.FC<{ jiraElement: any }> = ({
-//   jiraElement,
-// }) => {
-//   switch (jiraElement?.type) {
-//     case 'paragraph':
-//       return <p>{jiraElement.content[0].text}</p>;
-//     case 'heading':
-//       return <h1>{jiraElement.content[0].text}</h1>;
-//     default:
-//       return null;
-//   }
-// };
+import { SalaryRange } from '~/components';
 
 interface IProps {
   ticket: IJobPosting;
 }
 
-var formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'CAD',
-});
-
 export const JobPosting: React.FC<IProps> = ({ ticket }) => {
-  console.log({ ticket });
   return (
     <div className='border-2 border-gray-300 rounded text-sm px-4 py-3 flex justify-between'>
       <div className='flex flex-col gap-2'>
-        <p className='text-base font-semibold text-violet-700 underline'>
+        <Link
+          to={ticket.issueKey}
+          className='text-base font-semibold text-violet-700 underline'
+        >
           {ticket.title}
-        </p>
+        </Link>
         <p>
           Closing Date:{' '}
           {new Date(ticket.customFields.closingDate).toLocaleDateString()}
         </p>
         <p>
-          {formatter.format(ticket.customFields.salaryMin)} - $
-          {formatter.format(ticket.customFields.salaryMax)}
+          <SalaryRange
+            min={ticket.customFields.salaryMin}
+            max={ticket.customFields.salaryMax}
+          />
         </p>
       </div>
-
-      {/* {ticket.description?.content.map((element: any, index: number) => (
-        <JiraDescriptionElement key={index} jiraElement={element} />
-      ))} */}
 
       <div className='flex flex-col items-end justify-between'>
         <p className='mb-1'>{ticket.customFields.location}</p>

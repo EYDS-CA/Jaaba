@@ -1,4 +1,5 @@
 import { btoa } from '@remix-run/node/base64';
+import type { IJobPosting } from '~/dto/jira-ticket.dto';
 import { ISSUE_TYPES, JiraTicket } from '~/dto/jira-ticket.dto';
 
 const API_BASE_URL = `https://${process.env.JIRA_PROJECT_NAME}.atlassian.net/rest/api/3/`;
@@ -67,4 +68,19 @@ export const GetTickets = async () => {
     .filter((issue: any) => issue.fields.issuetype.subtask === false)
     .map((issue: any) => JiraTicket.parseJSON(issue));
   return [issues, data.total];
+};
+
+export const GetTicket = async (issueKey: string): Promise<IJobPosting> => {
+  const res = await fetch(API_BASE_URL + `search?jql=issuekey=${issueKey}`, {
+    method: 'GET',
+    headers: new Headers({
+      Authorization:
+        'Basic ' +
+        btoa(`${process.env.JIRA_USERNAME}:${process.env.JIRA_API_KEY}`),
+      'content-type': 'application/json',
+    }),
+  });
+  const data = await res.json();
+
+  return JiraTicket.parseJSON(data.issues[0]);
 };
