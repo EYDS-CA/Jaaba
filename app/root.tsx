@@ -30,7 +30,7 @@ export default function App() {
       </head>
       <body className='h-full flex'>
         <Nav />
-        <div className='h-full flex flex-col'>
+        <div className='h-full flex flex-col w-full'>
           <UserBar />
           <div className='h-full flex flex-col overflow-y-auto'>
             <Outlet />
