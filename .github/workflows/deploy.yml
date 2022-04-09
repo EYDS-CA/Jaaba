@@ -31,7 +31,7 @@ jobs:
       - uses: actions/cache@v2
         name: Cache yarn
         with:
-          path: ./.yarn/cache
+          path: ./node_modules
           key: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
           restore-keys: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
 
@@ -59,7 +59,7 @@ jobs:
       - uses: actions/cache@v2
         name: Cache yarn
         with:
-          path: ./.yarn/cache
+          path: ./node_modules
           key: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
           restore-keys: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
 
@@ -87,7 +87,7 @@ jobs:
       - uses: actions/cache@v2
         name: Cache yarn
         with:
-          path: ./.yarn/cache
+          path: ./node_modules
           key: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
           restore-keys: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
 
@@ -126,7 +126,7 @@ jobs:
       - uses: actions/cache@v2
         name: Cache yarn
         with:
-          path: ./.yarn/cache
+          path: ./node_modules
           key: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
           restore-keys: ${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}
 
