@@ -1,20 +1,16 @@
 import { Form } from '@remix-run/react';
 
-const parseDescription = (jsonDescription: any) => {
-  let content = '';
-  if (jsonDescription && 'content' in jsonDescription) {
-    content = jsonDescription.content.map((element: any) => {
-      switch (element.type) {
-        case 'paragraph':
-          return <p>{element.content[0].text}</p>;
-        case 'heading':
-          return <h1>{element.content[0].text}</h1>;
-        default:
-          return '';
-      }
-    });
+const JiraDescriptionElement: React.FC<{ jiraElement: any }> = ({
+  jiraElement,
+}) => {
+  switch (jiraElement?.type) {
+    case 'paragraph':
+      return <p>{jiraElement.content[0].text}</p>;
+    case 'heading':
+      return <h1>{jiraElement.content[0].text}</h1>;
+    default:
+      return null;
   }
-  return <>{content}</>;
 };
 
 export const JobContainer: React.FC<any> = ({ ticket }) => {
@@ -30,7 +26,11 @@ export const JobContainer: React.FC<any> = ({ ticket }) => {
       <div className='flex flex-col text-sm text-left '>
         <OpeningField value={ticket.closingDate} />
         <OpeningField value={ticket.salary} />
-        <div>{parseDescription(ticket.description)}</div>
+        <div>
+          {ticket.description?.content.map((element: any, index: number) => (
+            <JiraDescriptionElement key={index} jiraElement={element} />
+          ))}
+        </div>
         <div className='ml-auto inline-block'>
           <button className='border-2 border-indigo-700 text-indigo-700 rounded px-5 py-1 mx-1'>
             Save

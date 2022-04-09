@@ -23,15 +23,19 @@ export function links() {
 
 export default function App() {
   return (
-    <html lang='en' className='h-full bg-gray-200'>
+    <html lang='en' className='h-full'>
       <head>
         <Meta />
         <Links />
       </head>
-      <body className='h-full flex flex-col'>
+      <body className='h-full flex'>
         <Nav />
-        <UserBar />
-        <Outlet />
+        <div className='h-full flex flex-col'>
+          <UserBar />
+          <div className='h-full flex flex-col overflow-y-auto'>
+            <Outlet />
+          </div>
+        </div>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

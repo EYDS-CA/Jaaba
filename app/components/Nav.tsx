@@ -4,6 +4,7 @@ import {
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classnames from 'classnames';
 import { NavLink } from 'react-router-dom';
 
 const navLinks = [
@@ -12,22 +13,24 @@ const navLinks = [
   { title: 'My Profile', path: '/', icon: faUser },
 ];
 
-const baseClass = `flex justify-left items-center px-2 py-4 h-12 font-semibold rounded-md`;
-
-const active = `text-white bg-violet-600 ${baseClass}`;
-const inactive = `text-gray-400 ${baseClass}`;
-
 export const Nav: React.FC = () => {
   return (
-    <div className='w-60 h-full shadow-lg bg-indigo-800 px-1 py-4 absolute'>
-      <ul className='mt-20'>
+    <div className='w-60 flex-shrink-0 bg-indigo-800 px-2'>
+      <ul className='mt-32'>
         {navLinks.map(({ title, path, icon }) => (
           <li
             key={title}
-            className={`my-2 rounded-lg hover:text-white hover:bg-violet-600`}
+            className={`my-2 rounded-lg hover:text-white hover:bg-violet-500 hover:underline`}
           >
             <NavLink
-              className={({ isActive }: any) => (isActive ? active : inactive)}
+              className={({ isActive }) =>
+                classnames(
+                  `flex justify-left items-center px-2 py-4 h-12 font-semibold text-white rounded-md`,
+                  {
+                    'bg-violet-600': isActive,
+                  },
+                )
+              }
               to={path}
             >
               <FontAwesomeIcon icon={icon} className='h-4 w-4 pr-3' />
