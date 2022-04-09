@@ -1,39 +1,49 @@
-interface ContainerProps {
-  // temporary
-  title: string;
-  location: string;
-  closingDate: string;
-  company: string;
-  salary: string;
-}
+import { Form } from '@remix-run/react';
 
-export const JobContainer: React.FC<ContainerProps> = ({
-  title,
-  location,
-  closingDate,
-  company,
-  salary,
-}) => {
+const parseDescription = (jsonDescription: any) => {
+  let content = '';
+  if (jsonDescription && 'content' in jsonDescription) {
+    content = jsonDescription.content.map((element: any) => {
+      switch (element.type) {
+        case 'paragraph':
+          return <p>{element.content[0].text}</p>;
+        case 'heading':
+          return <h1>{element.content[0].text}</h1>;
+        default:
+          return '';
+      }
+    });
+  }
+  return <>{content}</>;
+};
+
+export const JobContainer: React.FC<any> = ({ ticket }) => {
   return (
     <div className='border-2 border-gray-300 rounded p-3 my-2'>
       <div className='flex'>
         <button className='font-semibold text-violet-800 underline underline-offset-2'>
-          {title}
+          {ticket.title}
         </button>
-        <span className='text-gray-400 ml-auto'>{location}</span>
+        <span className='text-gray-400 ml-auto'>{ticket.location}</span>
       </div>
 
       <div className='flex flex-col text-sm text-left '>
-        <OpeningField value={closingDate} />
-        <OpeningField value={company} />
-        <OpeningField value={salary} />
+        <OpeningField value={ticket.closingDate} />
+        <OpeningField value={ticket.salary} />
+        <div>{parseDescription(ticket.description)}</div>
         <div className='ml-auto inline-block'>
           <button className='border-2 border-indigo-700 text-indigo-700 rounded px-5 py-1 mx-1'>
             Save
           </button>
-          <button className='border-2 border-indigo-700 bg-indigo-700 text-white rounded px-5 py-1 mx-1'>
-            Apply
-          </button>
+          <Form method='post'>
+            <input type='hidden' name='parentId' value={ticket.issueId} />
+            <button
+              className='border-2 border-indigo-700 bg-indigo-700 text-white rounded px-5 py-1 mx-1'
+              type='submit'
+            >
+              Apply
+            </button>
+          </Form>
         </div>
       </div>
     </div>

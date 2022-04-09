@@ -24,7 +24,7 @@ export const Nav: React.FC = () => {
         {navLinks.map(({ title, path, icon }) => (
           <li
             key={title}
-            className={`px-1 my-2 rounded-lg hover:text-white hover:bg-violet-600`}
+            className={`my-2 rounded-lg hover:text-white hover:bg-violet-600`}
           >
             <NavLink
               className={({ isActive }: any) => (isActive ? active : inactive)}
