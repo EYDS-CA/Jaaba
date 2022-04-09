@@ -71,29 +71,9 @@ export class JiraTicket {
         name: jsonData.fields.status.name,
         id: jsonData.fields.status.id,
       },
-      description: JiraTicket.parseDescription(jsonData.fields.description),
+      description: jsonData.fields.description,
     };
 
     return issueData;
-  }
-
-  static parseDescription(jsonDescription: any): string {
-    let content = '';
-    if (jsonDescription && 'content' in jsonDescription) {
-      content = jsonDescription.content
-        .map((element: any) => {
-          switch (element.type) {
-            case 'paragraph':
-              return `<p>${element.content[0].text}</p>`;
-            case 'heading':
-              const level = element.attrs.level + 1;
-              return `<h${level}>${element.content[0].text}</h${level}>`;
-            default:
-              return '';
-          }
-        })
-        .join('');
-    }
-    return content;
   }
 }

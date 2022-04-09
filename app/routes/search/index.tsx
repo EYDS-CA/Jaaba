@@ -1,6 +1,6 @@
+import { JobOpenings, SearchFilter } from '~/components';
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
-import { JobOpeningList } from '~/components';
 import { manager } from '~/managers';
 
 // a loader and an action
@@ -20,9 +20,15 @@ export const loader: LoaderFunction = async () => {
 
 export default function Index() {
   const [tickets, count] = useLoaderData();
+
   return (
-    <div className='ml-60 h-full overflow-y-auto'>
-      <JobOpeningList tickets={tickets} count={count} />
+    <div className='ml-60 h-full bg-white'>
+      <div className='pt-4 px-7'>
+        <SearchFilter />
+      </div>
+      <div className='pt-8 px-7'>
+        <JobOpenings tickets={tickets} count={count} />
+      </div>
     </div>
   );
 }
