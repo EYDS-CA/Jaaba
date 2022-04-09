@@ -21,13 +21,13 @@ export default function Index() {
   const [tickets, count] = useLoaderData();
 
   return (
-    <div className='ml-60 h-full bg-white'>
+    <>
       <div className='pt-4 px-7'>
         <SearchFilter />
       </div>
       <div className='pt-8 px-7'>
         <JobOpenings tickets={tickets} count={count} />
       </div>
-    </div>
+    </>
   );
 }

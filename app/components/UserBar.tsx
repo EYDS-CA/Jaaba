@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const UserBar: React.FC = () => {
   return (
-    <div className='flex items-center bg-white py-4 mb-1'>
+    <div className='flex items-center bg-white py-4 mb-1 shadow-md'>
       <div className='ml-auto mr-4 flex items-center '>
         <FontAwesomeIcon
           icon={faUserAstronaut}
