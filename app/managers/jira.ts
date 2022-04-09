@@ -1,5 +1,5 @@
 import { btoa } from '@remix-run/node/base64';
-import { JiraTicket } from '~/dto/jira-ticket.dto';
+import { ISSUE_TYPES, JiraTicket } from '~/dto/jira-ticket.dto';
 
 const API_BASE_URL = `https://${process.env.JIRA_PROJECT_NAME}.atlassian.net/rest/api/3/`;
 
@@ -20,7 +20,7 @@ export const GetMetaData = async () => {
 
   return {
     projectId: response.projects[0].id,
-    issueType: JiraTicket.ISSUE_TYPES.TASK,
+    issueType: ISSUE_TYPES.TASK,
   };
 };
 

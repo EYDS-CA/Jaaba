@@ -1,4 +1,4 @@
-import { JobOpenings, SearchFilter } from '~/components';
+import { JobPosting, SearchFilter } from '~/components';
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { manager } from '~/managers';
@@ -26,7 +26,10 @@ export default function Index() {
         <SearchFilter />
       </div>
       <div className='pt-8 px-7'>
-        <JobOpenings tickets={tickets} count={count} />
+        <p className='font-semibold mb-2'>Jobs open to the public ({count})</p>
+        {tickets.map((ticket: any) => (
+          <JobPosting ticket={ticket} key={ticket.issueKey} />
+        ))}
       </div>
     </>
   );
