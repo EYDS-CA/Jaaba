@@ -3,7 +3,6 @@ import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { manager } from '~/managers';
 
-// a loader and an action
 export const action: ActionFunction = async ({ request }) => {
   const data = await request.formData();
   const parentId = data.get('parentId') ?? '';
