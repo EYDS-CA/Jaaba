@@ -19,7 +19,7 @@ export const Button: React.FC<IProps> = ({
 }) => {
   return (
     <button
-      className={classnames('py-1 px-3 rounded', {
+      className={classnames('py-1 px-3 rounded outline-offset-2', {
         'bg-indigo-700 text-white': variant === 'solid',
         'border-indigo-700 bg-white text-indigo-700 border':
           variant === 'outline',
