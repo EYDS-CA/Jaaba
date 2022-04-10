@@ -21,14 +21,6 @@
     "validate": "run-p \"test -- --run\" lint typecheck",
     "prepare": "husky install"
   },
-  "prettier": {
-    "tabWidth": 2,
-    "endOfLine": "auto",
-    "singleQuote": true,
-    "trailingComma": "all",
-    "jsxSingleQuote": true,
-    "proseWrap": "preserve"
-  },
   "eslintIgnore": [
     "/node_modules",
     "/server/index.js",

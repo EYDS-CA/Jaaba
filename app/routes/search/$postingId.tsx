@@ -1,0 +1,142 @@
+import { faAngleRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import type { ActionFunction, LoaderFunction } from '@remix-run/node';
+import { Form, useLoaderData, useTransition } from '@remix-run/react';
+import { Link } from 'react-router-dom';
+import { Button, SalaryRange } from '~/components';
+import type { IJobPosting } from '~/dto/jira-ticket.dto';
+import { manager } from '~/managers';
+import invariant from 'tiny-invariant';
+
+const JiraDescriptionElement: React.FC<{ jiraElement: any }> = ({
+  jiraElement,
+}) => {
+  switch (jiraElement?.type) {
+    case 'paragraph':
+      return <p className='mb-7'>{jiraElement.content[0]?.text}</p>;
+    case 'heading':
+      return (
+        <h1 className='mb-3 text-xl font-semibold'>
+          {jiraElement.content[0]?.text}
+        </h1>
+      );
+    default:
+      return null;
+  }
+};
+
+export const action: ActionFunction = async ({ request }) => {
+  const form = await request.formData();
+  const name = form.get('name');
+  const email = form.get('email');
+  const letter = form.get('letter');
+
+  const errorMessage = 'Please fill out your profile before applying.';
+  invariant(typeof name === 'string', errorMessage);
+  invariant(typeof email === 'string', errorMessage);
+  invariant(typeof letter === 'string', errorMessage);
+
+  const data = await request.formData();
+  const parentId = data.get('parentId') ?? '';
+  switch (request.method) {
+    case 'POST': {
+      return await manager.CreateTicket(
+        { name, email, letter },
+        parentId.toString(),
+      );
+    }
+  }
+};
+
+export const loader: LoaderFunction = async ({ params }) => {
+  return manager.GetTicket(params.postingId || '');
+};
+
+export default function Posting() {
+  const transition = useTransition();
+  const ticket = useLoaderData<IJobPosting>();
+  const currentProfile = {
+    name: 'placeholder_name',
+    email: 'placeholder_email',
+    letter: 'placeholder_letter',
+  };
+
+  const isSubmitting = transition.state === 'submitting';
+
+  return (
+    <div className='mb-20 p-3'>
+      <p className='flex items-center gap-1 text-gray-500'>
+        <Link to='/search' className='hover:underline'>
+          Job Search
+        </Link>{' '}
+        <FontAwesomeIcon icon={faAngleRight} className='h-4 w-4' />{' '}
+        <span className='font-semibold'>{ticket.title}</span>
+      </p>
+
+      <div className='flex justify-end '>
+        <Link
+          to='/search'
+          className='rounded border border-purple-800 py-1 px-2 font-semibold text-purple-800 hover:underline'
+        >
+          <FontAwesomeIcon icon={faArrowLeft} className='mr-2 h-4 w-4' />
+          Back to Job Search
+        </Link>
+      </div>
+
+      <div className='flex flex-col items-center'>
+        <div className='w-3/4'>
+          <h1 className='mb-20 text-center text-2xl font-semibold'>
+            {ticket.title}
+          </h1>
+
+          <div className='mb-9 flex items-center justify-between'>
+            <div className='flex flex-col gap-1'>
+              <p>
+                <span className='font-bold'>City: </span>
+                {ticket.customFields.location}
+              </p>
+              <p>
+                <span className='font-bold'>Closing Date: </span>
+                {new Date(ticket.customFields.closingDate).toLocaleDateString()}
+              </p>
+              <p>
+                <span className='font-bold'>Salary Range: </span>
+                <SalaryRange
+                  min={ticket.customFields.salaryMin}
+                  max={ticket.customFields.salaryMax}
+                />
+              </p>
+            </div>
+            <Form method='post'>
+              <input type='hidden' name='parentId' value={ticket.issueId} />
+              <input type='hidden' name='name' value={currentProfile?.name} />
+              <input type='hidden' name='email' value={currentProfile?.email} />
+              <input
+                type='hidden'
+                name='letter'
+                value={currentProfile?.letter}
+              />
+              <Button type='submit' loading={isSubmitting}>
+                Apply now
+              </Button>
+            </Form>
+          </div>
+
+          {ticket.description?.content.map((element: any, index: number) => (
+            <JiraDescriptionElement key={index} jiraElement={element} />
+          ))}
+
+          <Form method='post' className='flex w-full justify-center'>
+            <input type='hidden' name='parentId' value={ticket.issueId} />
+            <input type='hidden' name='name' value={currentProfile?.name} />
+            <input type='hidden' name='email' value={currentProfile?.email} />
+            <input type='hidden' name='letter' value={currentProfile?.letter} />
+            <Button type='submit' loading={isSubmitting}>
+              Apply now
+            </Button>
+          </Form>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -15,6 +15,7 @@ import {
 
 import tailwindStylesheetUrl from './styles/tailwind.css';
 import { getUser } from './session.server';
+import { Nav, UserBar } from './components';
 
 export const links: LinksFunction = () => {
   return [
@@ -47,8 +48,14 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className='h-full'>
-        <Outlet />
+      <body className='flex h-full'>
+        <Nav />
+        <div className='flex h-full w-full flex-col'>
+          <UserBar />
+          <div className='flex h-full flex-col overflow-y-auto'>
+            <Outlet />
+          </div>
+        </div>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
