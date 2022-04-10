@@ -1,68 +1,128 @@
-# Welcome to Remix!
+# Remix Grunge Stack
 
-- [Remix Docs](https://remix.run/docs)
+![The Remix Grunge Stack](https://repository-images.githubusercontent.com/463325363/edae4f5b-1a13-47ea-b90c-c05badc2a700)
 
-## Architect Setup
+Learn more about [Remix Stacks](https://remix.run/stacks).
 
-When deploying to AWS Lambda with Architect, you'll need:
-
-- Architect (`arc`) CLI
-- AWS SDK
-
-Architect recommends installing these globally:
-
-```sh
-npm i -g @architect/architect aws-sdk
 ```
+npx create-remix --template remix-run/grunge-stack
+```
+
+## What's in the stack
+
+- [AWS deployment](https://aws.com) with [Architect](https://arc.codes/)
+- Production-ready [DynamoDB Database](https://aws.amazon.com/dynamodb/)
+- [GitHub Actions](https://github.com/features/actions) for deploy on merge to production and staging environments
+- Email/Password Authentication with [cookie-based sessions](https://remix.run/docs/en/v1/api/remix#createcookiesessionstorage)
+- DynamoDB access via [`arc.tables`](https://arc.codes/docs/en/reference/runtime-helpers/node.js#arc.tables)
+- Styling with [Tailwind](https://tailwindcss.com/)
+- End-to-end testing with [Cypress](https://cypress.io)
+- Local third party request mocking with [MSW](https://mswjs.io)
+- Unit testing with [Vitest](https://vitest.dev) and [Testing Library](https://testing-library.com)
+- Code formatting with [Prettier](https://prettier.io)
+- Linting with [ESLint](https://eslint.org)
+- Static Types with [TypeScript](https://typescriptlang.org)
+
+Not a fan of bits of the stack? Fork it, change it, and use `npx create-remix --template your/repo`! Make it your own.
 
 ## Development
 
-### Environment
+- Validate the app has been set up properly (optional):
 
-If using Jira, to find your environment values:
+  ```sh
+  npm run validate
+  ```
 
-1. Go to https://<project>.atlassian.net/rest/api/3/issue/createmeta to find your project ID
-2. Create an API key on Jira
-3. Set BACKEND_SERVICE=jira
+- Start dev server:
+
+  ```sh
+  npm run dev
+  ```
+
+This starts your app in development mode, rebuilding assets on file changes.
+
+### Relevant code:
+
+This is a pretty simple note-taking app, but it's a good example of how you can build a full stack app with Architect and Remix. The main functionality is creating users, logging in and out, and creating and deleting notes.
+
+- creating users, and logging in and out [./app/models/user.server.ts](./app/models/user.server.ts)
+- user sessions, and verifying them [./app/session.server.ts](./app/session.server.ts)
+- creating, and deleting notes [./app/models/note.server.ts](./app/models/note.server.ts)
+
+The database that comes with `arc sandbox` is an in memory database, so if you restart the server, you'll lose your data. The Staging and Production environments won't behave this way, instead they'll persist the data in DynamoDB between deployments and Lambda executions.
 
 ## Deployment
 
-You will be running two processes during development when using Architect as your server.
+This Remix Stack comes with two GitHub Actions that handle automatically deploying your app to production and staging environments. By default, Arc will deploy to the `us-west-2` region, if you wish to deploy to a different region, you'll need to change your [`app.arc`](https://arc.codes/docs/en/reference/project-manifest/aws)
 
-- Your Architect server sandbox in one
-- The Remix development server in another
+Prior to your first deployment, you'll need to do a few things:
 
-```sh
-# in one tab
-arc sandbox
+- Create a new [GitHub repo](https://repo.new)
 
-# in another
-npm run dev
+- [Sign up](https://portal.aws.amazon.com/billing/signup#/start) and login to your AWS account
+
+- Add `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` to [your GitHub repo's secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets). Go to your AWS [security credentials](https://console.aws.amazon.com/iam/home?region=us-west-2#/security_credentials) and click on the "Access keys" tab, and then click "Create New Access Key", then you can copy those and add them to your repo's secrets.
+
+- Along with your AWS credentials, you'll also need to give your CloudFormation a `SESSION_SECRET` variable of its own for both staging and production environments, as well as an `ARC_APP_SECRET` for Arc itself.
+
+  ```sh
+  npx arc env --add --env staging ARC_APP_SECRET $(openssl rand -hex 32)
+  npx arc env --add --env staging SESSION_SECRET $(openssl rand -hex 32)
+  npx arc env --add --env production ARC_APP_SECRET $(openssl rand -hex 32)
+  npx arc env --add --env production SESSION_SECRET $(openssl rand -hex 32)
+  ```
+
+  If you don't have openssl installed, you can also use [1password](https://1password.com/password-generator) to generate a random secret, just replace `$(openssl rand -hex 32)` with the generated secret.
+
+## Where do I find my CloudFormation?
+
+You can find the CloudFormation template that Architect generated for you in the sam.yaml file.
+
+To find it on AWS, you can search for [CloudFormation](https://console.aws.amazon.com/cloudformation/home) (make sure you're looking at the correct region!) and find the name of your stack (the name is a PascalCased version of what you have in `app.arc`, so by default it's RemixGrungeStackStaging and RemixGrungeStackProduction) that matches what's in `app.arc`, you can find all of your app's resources under the "Resources" tab.
+
+## GitHub Actions
+
+We use GitHub Actions for continuous integration and deployment. Anything that gets into the `main` branch will be deployed to production after running tests/build/etc. Anything in the `dev` branch will be deployed to staging.
+
+## Testing
+
+### Cypress
+
+We use Cypress for our End-to-End tests in this project. You'll find those in the `cypress` directory. As you make changes, add to an existing file or create a new file in the `cypress/e2e` directory to test your changes.
+
+We use [`@testing-library/cypress`](https://testing-library.com/cypress) for selecting elements on the page semantically.
+
+To run these tests in development, run `npm run test:e2e:dev` which will start the dev server for the app as well as the Cypress client. Make sure the database is running in docker as described above.
+
+We have a utility for testing authenticated features without having to go through the login flow:
+
+```ts
+cy.login();
+// you are now logged in as a new user
 ```
 
-Open up [http://localhost:3333](http://localhost:3333) and you should be ready to go!
+We also have a utility to auto-delete the user at the end of your test. Just make sure to add this in each test file:
 
-If you'd rather run everything in a single tab, you can look at [concurrently](https://npm.im/concurrently) or similar tools to run both processes in one tab.
+```ts
+afterEach(() => {
+  cy.cleanupUser();
+});
+```
 
-## Deploying
+That way, we can keep your local db clean and keep your tests isolated from one another.
 
-Before you can deploy, you'll need to do some setup with AWS:
+### Vitest
 
-- First [install the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
-- Then [follow the Architect setup instructions](https://arc.codes/docs/en/guides/get-started/detailed-aws-setup).
+For lower level tests of utilities and individual components, we use `vitest`. We have DOM-specific assertion helpers via [`@testing-library/jest-dom`](https://testing-library.com/jest-dom).
 
-If you make it through all of that, you're ready to deploy!
+### Type Checking
 
-1. build the app for production:
+This project uses TypeScript. It's recommended to get TypeScript set up for your editor to get a really great in-editor experience with type checking and auto-complete. To run type checking across the whole project, run `npm run typecheck`.
 
-   ```sh
-   npm run build
-   ```
+### Linting
 
-2. Deploy with `arc`
+This project uses ESLint for linting. That is configured in `.eslintrc.js`.
 
-   ```sh
-   arc deploy production
-   ```
+### Formatting
 
-You're in business!
+We use [Prettier](https://prettier.io/) for auto-formatting in this project. It's recommended to install an editor plugin (like the [VSCode Prettier plugin](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)) to get auto-formatting on save. There's also a `npm run format` script you can run to format all files in the project.

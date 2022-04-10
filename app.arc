@@ -1,5 +1,5 @@
 @app
-jaaba
+grunge-stack-template
 
 @http
 /*
@@ -8,7 +8,13 @@ jaaba
 
 @static
 
-@aws
-profile default
-region ca-central-1
-  
+@tables
+user
+  pk *String
+
+password
+  pk *String # userId
+
+note
+  pk *String  # userId
+  sk **String # noteId

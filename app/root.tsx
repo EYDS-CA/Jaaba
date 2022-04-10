@@ -1,4 +1,9 @@
-import type { MetaFunction } from '@remix-run/node';
+import type {
+  LinksFunction,
+  LoaderFunction,
+  MetaFunction,
+} from "@remix-run/node";
+import { json } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -6,36 +11,44 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-} from '@remix-run/react';
-import tailwindStylesheetUrl from './styles/tailwind.css';
+} from "@remix-run/react";
 
-import { Nav, UserBar } from './components';
+import tailwindStylesheetUrl from "./styles/tailwind.css";
+import { getUser } from "./session.server";
+
+export const links: LinksFunction = () => {
+  return [
+    { rel: "stylesheet", href: tailwindStylesheetUrl },
+    // NOTE: Architect deploys the public directory to /_static/
+    { rel: "icon", href: "/_static/favicon.ico" },
+  ];
+};
 
 export const meta: MetaFunction = () => ({
-  charset: 'utf-8',
-  title: 'JaaBa',
-  viewport: 'width=device-width,initial-scale=1',
+  charset: "utf-8",
+  title: "Remix Notes",
+  viewport: "width=device-width,initial-scale=1",
 });
 
-export function links() {
-  return [{ rel: 'stylesheet', href: tailwindStylesheetUrl }];
-}
+type LoaderData = {
+  user: Awaited<ReturnType<typeof getUser>>;
+};
+
+export const loader: LoaderFunction = async ({ request }) => {
+  return json<LoaderData>({
+    user: await getUser(request),
+  });
+};
 
 export default function App() {
   return (
-    <html lang='en' className='h-full'>
+    <html lang="en" className="h-full">
       <head>
         <Meta />
         <Links />
       </head>
-      <body className='h-full flex'>
-        <Nav />
-        <div className='h-full flex flex-col w-full'>
-          <UserBar />
-          <div className='h-full flex flex-col overflow-y-auto'>
-            <Outlet />
-          </div>
-        </div>
+      <body className="h-full">
+        <Outlet />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
