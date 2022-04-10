@@ -1,8 +1,16 @@
 import arc from '@architect/functions';
 import bcrypt from 'bcryptjs';
 import invariant from 'tiny-invariant';
+import type { IProfile } from '~/routes/profile';
 
-export type User = { id: `email#${string}`; email: string };
+export type User = {
+  id: `email#${string}`;
+  email: string;
+  profile?: {
+    name: string;
+    letter: string;
+  };
+};
 export type Password = { password: string };
 
 export async function getUserById(id: User['id']): Promise<User | null> {
@@ -13,7 +21,9 @@ export async function getUserById(id: User['id']): Promise<User | null> {
   });
 
   const [record] = result.Items;
-  if (record) return { id: record.pk, email: record.email };
+  if (record) {
+    return { id: record.pk, email: record.email, profile: record.profile };
+  }
   return null;
 }
 
@@ -32,6 +42,29 @@ async function getUserPasswordByEmail(email: User['email']) {
 
   if (record) return { hash: record.password };
   return null;
+}
+
+export async function saveUserProfile({
+  profile,
+  email,
+}: {
+  profile: IProfile;
+  email: string;
+}) {
+  const db = await arc.tables();
+
+  const saved = await db.user.update({
+    Key: { pk: `email#${email}` },
+    ReturnValues: 'ALL_NEW',
+    UpdateExpression: 'SET #P = :p',
+    ExpressionAttributeNames: {
+      '#P': 'profile',
+    },
+    ExpressionAttributeValues: {
+      ':p': profile,
+    },
+  });
+  return saved;
 }
 
 export async function createUser(
