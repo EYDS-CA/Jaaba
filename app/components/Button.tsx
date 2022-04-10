@@ -4,7 +4,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface IProps {
-  variant?: 'outline' | 'solid';
+  variant?: 'outline' | 'solid' | 'link';
   loading?: boolean;
   disabled?: boolean;
   type: 'button' | 'submit' | 'reset';
@@ -23,6 +23,7 @@ export const Button: React.FC<IProps> = ({
         'bg-indigo-700 text-white': variant === 'solid',
         'border border-indigo-700 bg-white text-indigo-700':
           variant === 'outline',
+        'text-indigo-700': variant === 'link',
       })}
       disabled={disabled}
       type={type}
