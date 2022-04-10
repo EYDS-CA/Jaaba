@@ -1,12 +1,18 @@
-import { Form, Link } from '@remix-run/react';
+import { Form, Link, useTransition } from '@remix-run/react';
 import type { IJobPosting } from '~/dto/jira-ticket.dto';
 import { SalaryRange } from '~/components';
+import { getProfileFromLocalStorage } from '~/util/profile.util';
+import { Button } from '../Button';
 
 interface IProps {
   ticket: IJobPosting;
 }
 
 export const JobPosting: React.FC<IProps> = ({ ticket }) => {
+  const currentProfile = getProfileFromLocalStorage();
+  const transition = useTransition();
+  const isSubmitting = transition.state === 'submitting';
+
   return (
     <div className='border-2 border-gray-300 rounded text-sm px-4 py-3 flex justify-between'>
       <div className='flex flex-col gap-2'>
@@ -32,17 +38,21 @@ export const JobPosting: React.FC<IProps> = ({ ticket }) => {
         <p className='mb-1'>{ticket.customFields.location}</p>
 
         <div className='flex gap-2'>
-          <button className='border-2 border-indigo-700 text-indigo-700 rounded px-5 py-1'>
+          <Button variant='outline' type='button'>
             Save
-          </button>
+          </Button>
           <Form method='post'>
             <input type='hidden' name='parentId' value={ticket.issueId} />
-            <button
-              className='border-2 border-indigo-700 bg-indigo-700 text-white rounded px-5 py-1'
+            <input type='hidden' name='name' value={currentProfile?.name} />
+            <input type='hidden' name='email' value={currentProfile?.email} />
+            <input type='hidden' name='letter' value={currentProfile?.letter} />
+            <Button
+              loading={isSubmitting}
+              disabled={isSubmitting}
               type='submit'
             >
               Apply
-            </button>
+            </Button>
           </Form>
         </div>
       </div>

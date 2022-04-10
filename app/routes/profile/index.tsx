@@ -2,34 +2,16 @@ import { Form } from '@remix-run/react';
 import React from 'react';
 import { useState } from 'react';
 import { Button } from '~/components';
+import {
+  getProfileFromLocalStorage,
+  saveProfileToLocalStorage,
+} from '~/util/profile.util';
 
-interface IProfile {
+export interface IProfile {
   name: string;
   email: string;
   letter: string;
 }
-
-const saveProfileToLocalStorage = (submitEvent: any) => {
-  if (typeof window === 'undefined') return;
-  const formElements = submitEvent.target.elements;
-  const name = formElements['name'].value;
-  const email = formElements['email'].value;
-  const letter = formElements['letter'].value;
-  localStorage.setItem('profile', JSON.stringify({ name, email, letter }));
-};
-
-const getProfileFromLocalStorage = () => {
-  if (typeof window === 'undefined') return null;
-  const profile = localStorage.getItem('profile');
-  if (profile) {
-    return JSON.parse(profile);
-  }
-  return {
-    name: '',
-    email: '',
-    letter: '',
-  };
-};
 
 export default function Profile() {
   const [profile, setProfile] = useState<IProfile>(

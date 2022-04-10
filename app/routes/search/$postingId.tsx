@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import { Button, SalaryRange } from '~/components';
 import type { IJobPosting } from '~/dto/jira-ticket.dto';
 import { manager } from '~/managers';
+import invariant from 'tiny-invariant';
+import { getProfileFromLocalStorage } from '~/util/profile.util';
 
 const JiraDescriptionElement: React.FC<{ jiraElement: any }> = ({
   jiraElement,
@@ -25,11 +27,24 @@ const JiraDescriptionElement: React.FC<{ jiraElement: any }> = ({
 };
 
 export const action: ActionFunction = async ({ request }) => {
+  const form = await request.formData();
+  const name = form.get('name');
+  const email = form.get('email');
+  const letter = form.get('letter');
+
+  const errorMessage = 'Please fill out your profile before applying.';
+  invariant(typeof name === 'string', errorMessage);
+  invariant(typeof email === 'string', errorMessage);
+  invariant(typeof letter === 'string', errorMessage);
+
   const data = await request.formData();
   const parentId = data.get('parentId') ?? '';
   switch (request.method) {
     case 'POST': {
-      return await manager.CreateTicket('title', 'body', parentId.toString());
+      return await manager.CreateTicket(
+        { name, email, letter },
+        parentId.toString(),
+      );
     }
   }
 };
@@ -41,6 +56,7 @@ export const loader: LoaderFunction = async ({ params }) => {
 export default function Posting() {
   const transition = useTransition();
   const ticket = useLoaderData<IJobPosting>();
+  const currentProfile = getProfileFromLocalStorage();
 
   const isSubmitting = transition.state === 'submitting';
 
@@ -90,6 +106,13 @@ export default function Posting() {
             </div>
             <Form method='post'>
               <input type='hidden' name='parentId' value={ticket.issueId} />
+              <input type='hidden' name='name' value={currentProfile?.name} />
+              <input type='hidden' name='email' value={currentProfile?.email} />
+              <input
+                type='hidden'
+                name='letter'
+                value={currentProfile?.letter}
+              />
               <Button type='submit' loading={isSubmitting}>
                 Apply now
               </Button>
@@ -102,6 +125,9 @@ export default function Posting() {
 
           <Form method='post' className='w-full flex justify-center'>
             <input type='hidden' name='parentId' value={ticket.issueId} />
+            <input type='hidden' name='name' value={currentProfile?.name} />
+            <input type='hidden' name='email' value={currentProfile?.email} />
+            <input type='hidden' name='letter' value={currentProfile?.letter} />
             <Button type='submit' loading={isSubmitting}>
               Apply now
             </Button>
