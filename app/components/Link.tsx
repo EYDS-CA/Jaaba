@@ -11,9 +11,9 @@ export const Link: React.FC<IProps> = ({ children, to, variant = 'link' }) => {
   return (
     <RemixLink
       to={to}
-      className={classnames('rounded py-1 px-3 outline-offset-2', {
-        'bg-indigo-700 text-white': variant === 'solid',
-        'border border-indigo-700 bg-white text-indigo-700':
+      className={classnames('rounded  outline-offset-4', {
+        'bg-indigo-700 py-1 px-3 text-white': variant === 'solid',
+        ' border border-indigo-700 bg-white py-1 px-3 text-indigo-700':
           variant === 'outline',
         'text-indigo-700 underline': variant === 'link',
       })}

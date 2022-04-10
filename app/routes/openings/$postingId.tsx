@@ -7,6 +7,7 @@ import { Button, SalaryRange } from '~/components';
 import type { IJobPosting } from '~/dto/jira-ticket.dto';
 import { manager } from '~/managers';
 import invariant from 'tiny-invariant';
+import { useOptionalUser } from '~/utils';
 
 const JiraDescriptionElement: React.FC<{ jiraElement: any }> = ({
   jiraElement,
@@ -50,20 +51,16 @@ export const loader: LoaderFunction = async ({ params }) => {
 };
 
 export default function Posting() {
+  const user = useOptionalUser();
   const transition = useTransition();
   const ticket = useLoaderData<IJobPosting>();
-  const currentProfile = {
-    name: 'placeholder_name',
-    email: 'placeholder_email',
-    letter: 'placeholder_letter',
-  };
 
   const isSubmitting = transition.state === 'submitting';
 
   return (
     <div className='mb-20 p-3'>
       <p className='flex items-center gap-1 text-gray-500'>
-        <Link to='/search' className='hover:underline'>
+        <Link to='/openings' className='hover:underline'>
           Job Search
         </Link>{' '}
         <FontAwesomeIcon icon={faAngleRight} className='h-4 w-4' />{' '}
@@ -72,7 +69,7 @@ export default function Posting() {
 
       <div className='flex justify-end '>
         <Link
-          to='/search'
+          to='/openings'
           className='rounded border border-purple-800 py-1 px-2 font-semibold text-purple-800 hover:underline'
         >
           <FontAwesomeIcon icon={faArrowLeft} className='mr-2 h-4 w-4' />
@@ -104,34 +101,50 @@ export default function Posting() {
                 />
               </p>
             </div>
-            <Form method='post'>
-              <input type='hidden' name='parentId' value={ticket.issueId} />
-              <input type='hidden' name='name' value={currentProfile?.name} />
-              <input type='hidden' name='email' value={currentProfile?.email} />
-              <input
-                type='hidden'
-                name='letter'
-                value={currentProfile?.letter}
-              />
-              <Button type='submit' loading={isSubmitting}>
-                Apply now
-              </Button>
-            </Form>
+            {user ? (
+              <Form method='post'>
+                <input type='hidden' name='parentId' value={ticket.issueId} />
+                <input type='hidden' name='name' value={user.profile?.name} />
+                <input
+                  type='hidden'
+                  name='letter'
+                  value={user.profile?.letter}
+                />
+                <input type='hidden' name='email' value={user?.email} />
+                <Button type='submit' loading={isSubmitting}>
+                  Apply now
+                </Button>
+              </Form>
+            ) : null}
           </div>
 
-          {ticket.description?.content.map((element: any, index: number) => (
-            <JiraDescriptionElement key={index} jiraElement={element} />
-          ))}
+          {ticket.description ? (
+            <>
+              {ticket.description?.content.map(
+                (element: any, index: number) => (
+                  <>
+                    <JiraDescriptionElement key={index} jiraElement={element} />
+                  </>
+                ),
+              )}
 
-          <Form method='post' className='flex w-full justify-center'>
-            <input type='hidden' name='parentId' value={ticket.issueId} />
-            <input type='hidden' name='name' value={currentProfile?.name} />
-            <input type='hidden' name='email' value={currentProfile?.email} />
-            <input type='hidden' name='letter' value={currentProfile?.letter} />
-            <Button type='submit' loading={isSubmitting}>
-              Apply now
-            </Button>
-          </Form>
+              {user ? (
+                <Form method='post' className='flex w-full justify-center'>
+                  <input type='hidden' name='parentId' value={ticket.issueId} />
+                  <input type='hidden' name='parentId' value={ticket.issueId} />
+                  <input type='hidden' name='name' value={user.profile?.name} />
+                  <input
+                    type='hidden'
+                    name='letter'
+                    value={user.profile?.letter}
+                  />
+                  <Button type='submit' loading={isSubmitting}>
+                    Apply now
+                  </Button>
+                </Form>
+              ) : null}
+            </>
+          ) : null}
         </div>
       </div>
     </div>

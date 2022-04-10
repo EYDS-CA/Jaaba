@@ -1,4 +1,13 @@
 import { Form } from '@remix-run/react';
+import type { LoaderFunction } from '@remix-run/server-runtime';
+import { json, redirect } from '@remix-run/server-runtime';
+import { getUserId } from '~/session.server';
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const userId = await getUserId(request);
+  if (!userId) return redirect('/openings');
+  return json({});
+};
 
 export default function Index() {
   return (

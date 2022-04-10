@@ -1,9 +1,11 @@
 import { Form } from '@remix-run/react';
-import type { ActionFunction } from '@remix-run/server-runtime';
+import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
+import { redirect } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 import invariant from 'tiny-invariant';
 import { Button } from '~/components';
 import { getUserByEmail, saveUserProfile } from '~/models/user.server';
+import { getUserId } from '~/session.server';
 import { useUser } from '~/utils';
 
 export interface IProfile {
@@ -48,6 +50,12 @@ export const action: ActionFunction = async ({ request }) => {
     profile: { name, letter },
     email: existingUser.email,
   });
+};
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const userId = await getUserId(request);
+  if (!userId) return redirect('/openings');
+  return json({});
 };
 
 export default function Profile() {
