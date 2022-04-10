@@ -8,11 +8,6 @@ import { getUserByEmail, saveUserProfile } from '~/models/user.server';
 import { getUserId } from '~/session.server';
 import { useUser } from '~/utils';
 
-export interface IProfile {
-  name: string;
-  letter: string;
-}
-
 interface ActionData {
   errors: {
     name?: string;

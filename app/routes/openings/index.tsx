@@ -19,7 +19,10 @@ export const action: ActionFunction = async ({ request }) => {
   const parentId = data.get('parentId') ?? '';
   switch (request.method) {
     case 'POST': {
-      return await manager.CreateTicket({ name, letter }, parentId.toString());
+      return await manager.CreateTicket(
+        { email, name, letter },
+        parentId.toString(),
+      );
     }
   }
 };

@@ -1,7 +1,6 @@
 import arc from '@architect/functions';
 import bcrypt from 'bcryptjs';
 import invariant from 'tiny-invariant';
-import type { IProfile } from '~/routes/profile';
 
 export type User = {
   id: `email#${string}`;
@@ -48,7 +47,7 @@ export async function saveUserProfile({
   profile,
   email,
 }: {
-  profile: IProfile;
+  profile: User['profile'];
   email: string;
 }) {
   const db = await arc.tables();

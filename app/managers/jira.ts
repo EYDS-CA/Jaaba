@@ -1,7 +1,12 @@
 import { btoa } from '@remix-run/node/base64';
 import type { IJobPosting } from '~/dto/jira-ticket.dto';
 import { ISSUE_TYPES, JiraTicket } from '~/dto/jira-ticket.dto';
-import type { IProfile } from '~/routes/profile';
+
+interface CreateTicketPayload {
+  name: string;
+  email: string;
+  letter: string;
+}
 
 const API_BASE_URL = `https://${process.env.JIRA_PROJECT_NAME}.atlassian.net/rest/api/3/`;
 
@@ -26,10 +31,13 @@ export const GetMetaData = async () => {
   };
 };
 
-export const CreateTicket = async (profile: IProfile, parentId: string) => {
+export const CreateTicket = async (
+  payload: CreateTicketPayload,
+  parentId: string,
+) => {
   const jiraTicket = new JiraTicket(
-    profile.name,
-    `${profile.email}\n${profile.letter}`,
+    payload.name,
+    `${payload.email}\n${payload.letter}`,
     parentId,
   );
 
