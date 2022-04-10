@@ -41,9 +41,11 @@ export default function Index() {
       </div>
       <div className='pt-8 px-7'>
         <p className='font-semibold mb-2'>Jobs open to the public ({count})</p>
-        {tickets.map((ticket: any) => (
-          <JobPosting ticket={ticket} key={ticket.issueKey} />
-        ))}
+        <div className='flex flex-col gap-3'>
+          {tickets.map((ticket: any) => (
+            <JobPosting ticket={ticket} key={ticket.issueKey} />
+          ))}
+        </div>
       </div>
     </>
   );
