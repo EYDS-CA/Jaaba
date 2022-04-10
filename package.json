@@ -58,7 +58,8 @@
   "lint-staged": {
     "*.{tsx,ts}": [
       "prettier --write",
-      "eslint --cache --fix --max-warnings=0"
+      "eslint --cache --fix --max-warnings=0",
+      "typecheck -b"
     ]
   }
 }
