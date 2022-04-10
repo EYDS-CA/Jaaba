@@ -13,3 +13,4 @@ sam.yaml
 /app/styles/tailwind.css
 
 yarn-error.log
+.eslintcache
