@@ -1,6 +1,8 @@
+import { JobPosting, SearchFilter } from '~/components';
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
-import { manager } from '~/managers';
+import { useLoaderData } from '@remix-run/react';
 import invariant from 'tiny-invariant';
+import { manager } from '~/managers';
 
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
@@ -18,7 +20,7 @@ export const action: ActionFunction = async ({ request }) => {
   switch (request.method) {
     case 'POST': {
       return await manager.CreateTicket(
-        { name, email, letter },
+        { email, name, letter },
         parentId.toString(),
       );
     }
@@ -26,5 +28,25 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export const loader: LoaderFunction = async () => {
-  return await manager.GetTickets();
+  return manager.GetTickets();
 };
+
+export default function Index() {
+  const [tickets, count] = useLoaderData();
+
+  return (
+    <>
+      <div className='px-7 pt-4'>
+        <SearchFilter />
+      </div>
+      <div className='px-7 pt-8'>
+        <p className='mb-2 font-semibold'>Jobs open to the public ({count})</p>
+        <div className='flex flex-col gap-3'>
+          {tickets.map((ticket: any) => (
+            <JobPosting ticket={ticket} key={ticket.issueKey} />
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}

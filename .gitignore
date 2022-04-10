@@ -1,14 +1,16 @@
 node_modules
 
-/.cache
-/server/index.js
-/server/index.js.map
+server/index.js*
+server/package.json
+server/yarn.lock
 /public/build
 preferences.arc
 sam.json
 sam.yaml
 .env
-.DS_Store
-.eslintcache
+
 
 /app/styles/tailwind.css
+
+yarn-error.log
+.eslintcache

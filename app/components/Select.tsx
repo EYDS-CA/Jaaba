@@ -10,7 +10,7 @@ export const Select: React.FC<SelectProps> = ({ name }) => {
       <select
         defaultValue={0}
         name={name}
-        className='border border-gray-300 rounded h-8 px-2 block w-52'
+        className='block h-8 w-52 rounded border border-gray-300 px-2'
       >
         <option disabled value='0'></option>
         <option value='1'>Value 1</option>

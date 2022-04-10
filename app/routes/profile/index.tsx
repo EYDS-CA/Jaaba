@@ -1,53 +1,80 @@
-import { Form } from '@remix-run/react';
-import React from 'react';
-import { useState } from 'react';
+import { Form, useActionData } from '@remix-run/react';
+import type { ActionFunction, LoaderFunction } from '@remix-run/server-runtime';
+import { redirect } from '@remix-run/server-runtime';
+import { json } from '@remix-run/server-runtime';
+import invariant from 'tiny-invariant';
 import { Button } from '~/components';
-import {
-  getProfileFromLocalStorage,
-  saveProfileToLocalStorage,
-} from '~/util/profile.util';
+import { getUserByEmail, saveUserProfile } from '~/models/user.server';
+import { getUserId } from '~/session.server';
+import { useUser } from '~/utils';
 
-export interface IProfile {
-  name: string;
-  email: string;
-  letter: string;
+interface ActionData {
+  errors: {
+    name?: string;
+    letter?: string;
+  };
+  response?: string;
 }
 
-export default function Profile() {
-  const [profile, setProfile] = useState<IProfile>(
-    getProfileFromLocalStorage() || {
-      name: '',
-      email: '',
-      letter: '',
-    },
-  );
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+  const email = formData.get('email');
+  const name = formData.get('name');
+  const letter = formData.get('letter');
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => setProfile((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  invariant(typeof email === 'string', 'email is required');
+
+  if (typeof name !== 'string') {
+    return json<ActionData>(
+      { errors: { name: 'Name is required' } },
+      { status: 400 },
+    );
+  }
+
+  if (typeof letter !== 'string') {
+    return json<ActionData>(
+      { errors: { name: 'Cover letter is required' } },
+      { status: 400 },
+    );
+  }
+
+  const existingUser = await getUserByEmail(email);
+
+  invariant(existingUser, 'User not found');
+
+  await saveUserProfile({
+    profile: { name, letter },
+    email: existingUser.email,
+  });
+
+  return {
+    response: 'Profile successfully updated',
+  };
+};
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const userId = await getUserId(request);
+  if (!userId) return redirect('/openings');
+  return json({});
+};
+
+export default function Profile() {
+  const user = useUser();
+  const actionData = useActionData();
 
   return (
-    <div className='w-full pt-4 px-7'>
-      <h1 className='text-2xl font-bold mb-5'>My Profile</h1>
+    <div className='w-full px-7 pt-4'>
+      <h1 className='mb-5 text-2xl font-bold'>My Profile</h1>
 
-      <Form onSubmit={saveProfileToLocalStorage}>
+      <Form method='post' className='flex flex-col items-start gap-2'>
+        <input type='hidden' name='email' value={user.email} />
         <label htmlFor='profile-name'>Name</label>
         <input
           type='text'
           name='name'
           id='name'
-          value={profile.name}
-          onChange={handleChange}
-          className='border border-gray-300 rounded px-2 py-1 block mb-2'
-        />
-        <label htmlFor='email'>Email</label>
-        <input
-          type='text'
-          name='email'
-          id='email'
-          value={profile.email}
-          onChange={handleChange}
-          className='border border-gray-300 rounded px-2 py-1 block mb-2'
+          defaultValue={user.profile?.name}
+          className='block rounded border border-gray-300 px-2 py-1'
         />
         <label htmlFor='letter'>Cover Letter</label>
         <textarea
@@ -55,12 +82,15 @@ export default function Profile() {
           rows={10}
           name='letter'
           id='letter'
-          onChange={handleChange}
-          className='border border-gray-300 rounded px-2 py-1 block mb-2'
-        >
-          {profile.letter}
-        </textarea>
+          defaultValue={user.profile?.letter}
+          className='block rounded border border-gray-300 px-2 py-1'
+        />
         <Button type='submit'>Save</Button>
+        {actionData?.response ? (
+          <p className='inline rounded bg-green-500 px-2 py-1'>
+            {actionData.response}
+          </p>
+        ) : null}
       </Form>
     </div>
   );

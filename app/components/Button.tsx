@@ -4,7 +4,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface IProps {
-  variant?: 'outline' | 'solid';
+  variant?: 'outline' | 'solid' | 'link';
   loading?: boolean;
   disabled?: boolean;
   type: 'button' | 'submit' | 'reset';
@@ -19,16 +19,17 @@ export const Button: React.FC<IProps> = ({
 }) => {
   return (
     <button
-      className={classnames('py-1 px-3 rounded outline-offset-2', {
+      className={classnames('rounded py-1 px-3 outline-offset-4', {
         'bg-indigo-700 text-white': variant === 'solid',
-        'border-indigo-700 bg-white text-indigo-700 border':
+        'border border-indigo-700 bg-white text-indigo-700':
           variant === 'outline',
+        'text-indigo-700': variant === 'link',
       })}
       disabled={disabled}
       type={type}
     >
       {loading ? (
-        <FontAwesomeIcon icon={faSpinner} className='w-4 h-4 animate-spin' />
+        <FontAwesomeIcon icon={faSpinner} className='h-4 w-4 animate-spin' />
       ) : (
         children
       )}

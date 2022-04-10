@@ -7,7 +7,7 @@ import { Button, SalaryRange } from '~/components';
 import type { IJobPosting } from '~/dto/jira-ticket.dto';
 import { manager } from '~/managers';
 import invariant from 'tiny-invariant';
-import { getProfileFromLocalStorage } from '~/util/profile.util';
+import { useOptionalUser } from '~/utils';
 
 const JiraDescriptionElement: React.FC<{ jiraElement: any }> = ({
   jiraElement,
@@ -17,7 +17,7 @@ const JiraDescriptionElement: React.FC<{ jiraElement: any }> = ({
       return <p className='mb-7'>{jiraElement.content[0]?.text}</p>;
     case 'heading':
       return (
-        <h1 className='text-xl font-semibold mb-3'>
+        <h1 className='mb-3 text-xl font-semibold'>
           {jiraElement.content[0]?.text}
         </h1>
       );
@@ -42,7 +42,7 @@ export const action: ActionFunction = async ({ request }) => {
   switch (request.method) {
     case 'POST': {
       return await manager.CreateTicket(
-        { name, email, letter },
+        { name, letter, email },
         parentId.toString(),
       );
     }
@@ -54,39 +54,39 @@ export const loader: LoaderFunction = async ({ params }) => {
 };
 
 export default function Posting() {
+  const user = useOptionalUser();
   const transition = useTransition();
   const ticket = useLoaderData<IJobPosting>();
-  const currentProfile = getProfileFromLocalStorage();
 
   const isSubmitting = transition.state === 'submitting';
 
   return (
-    <div className='p-3 mb-20'>
-      <p className='text-gray-500 flex items-center gap-1'>
-        <Link to='/search' className='hover:underline'>
+    <div className='mb-20 p-3'>
+      <p className='flex items-center gap-1 text-gray-500'>
+        <Link to='/openings' className='hover:underline'>
           Job Search
         </Link>{' '}
-        <FontAwesomeIcon icon={faAngleRight} className='w-4 h-4' />{' '}
+        <FontAwesomeIcon icon={faAngleRight} className='h-4 w-4' />{' '}
         <span className='font-semibold'>{ticket.title}</span>
       </p>
 
       <div className='flex justify-end '>
         <Link
-          to='/search'
-          className='border py-1 px-2 rounded border-purple-800 text-purple-800 font-semibold hover:underline'
+          to='/openings'
+          className='rounded border border-purple-800 py-1 px-2 font-semibold text-purple-800 hover:underline'
         >
-          <FontAwesomeIcon icon={faArrowLeft} className='w-4 h-4 mr-2' />
+          <FontAwesomeIcon icon={faArrowLeft} className='mr-2 h-4 w-4' />
           Back to Job Search
         </Link>
       </div>
 
       <div className='flex flex-col items-center'>
         <div className='w-3/4'>
-          <h1 className='text-center text-2xl mb-20 font-semibold'>
+          <h1 className='mb-20 text-center text-2xl font-semibold'>
             {ticket.title}
           </h1>
 
-          <div className='flex justify-between items-center mb-9'>
+          <div className='mb-9 flex items-center justify-between'>
             <div className='flex flex-col gap-1'>
               <p>
                 <span className='font-bold'>City: </span>
@@ -104,34 +104,50 @@ export default function Posting() {
                 />
               </p>
             </div>
-            <Form method='post'>
-              <input type='hidden' name='parentId' value={ticket.issueId} />
-              <input type='hidden' name='name' value={currentProfile?.name} />
-              <input type='hidden' name='email' value={currentProfile?.email} />
-              <input
-                type='hidden'
-                name='letter'
-                value={currentProfile?.letter}
-              />
-              <Button type='submit' loading={isSubmitting}>
-                Apply now
-              </Button>
-            </Form>
+            {user ? (
+              <Form method='post'>
+                <input type='hidden' name='parentId' value={ticket.issueId} />
+                <input type='hidden' name='name' value={user.profile?.name} />
+                <input
+                  type='hidden'
+                  name='letter'
+                  value={user.profile?.letter}
+                />
+                <input type='hidden' name='email' value={user?.email} />
+                <Button type='submit' loading={isSubmitting}>
+                  Apply now
+                </Button>
+              </Form>
+            ) : null}
           </div>
 
-          {ticket.description?.content.map((element: any, index: number) => (
-            <JiraDescriptionElement key={index} jiraElement={element} />
-          ))}
+          {ticket.description ? (
+            <>
+              {ticket.description?.content.map(
+                (element: any, index: number) => (
+                  <>
+                    <JiraDescriptionElement key={index} jiraElement={element} />
+                  </>
+                ),
+              )}
 
-          <Form method='post' className='w-full flex justify-center'>
-            <input type='hidden' name='parentId' value={ticket.issueId} />
-            <input type='hidden' name='name' value={currentProfile?.name} />
-            <input type='hidden' name='email' value={currentProfile?.email} />
-            <input type='hidden' name='letter' value={currentProfile?.letter} />
-            <Button type='submit' loading={isSubmitting}>
-              Apply now
-            </Button>
-          </Form>
+              {user ? (
+                <Form method='post' className='flex w-full justify-center'>
+                  <input type='hidden' name='parentId' value={ticket.issueId} />
+                  <input type='hidden' name='parentId' value={ticket.issueId} />
+                  <input type='hidden' name='name' value={user.profile?.name} />
+                  <input
+                    type='hidden'
+                    name='letter'
+                    value={user.profile?.letter}
+                  />
+                  <Button type='submit' loading={isSubmitting}>
+                    Apply now
+                  </Button>
+                </Form>
+              ) : null}
+            </>
+          ) : null}
         </div>
       </div>
     </div>

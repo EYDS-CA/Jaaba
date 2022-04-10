@@ -6,9 +6,9 @@ import { Select } from '../Select';
 export const SearchFilter: React.FC = () => {
   return (
     <>
-      <span className='font-bold text-2xl'>Job Search</span>
+      <span className='text-2xl font-bold'>Job Search</span>
       <Form method='post'>
-        <div className='flex flex-wrap bg-gray-200 p-4 mt-3 rounded-md'>
+        <div className='mt-3 flex flex-wrap rounded-md bg-gray-200 p-4'>
           <div className='mx-1 my-2'>
             <Input name='Job Title' />
           </div>

@@ -12,7 +12,7 @@ export const Input: React.FC<InputProps> = ({ name }) => {
       <input
         name={name}
         id={name}
-        className='border border-gray-300 rounded h-8 px-2 block w-52'
+        className='block h-8 w-52 rounded border border-gray-300 px-2'
         type='text'
         placeholder=''
       />
