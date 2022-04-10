@@ -7,7 +7,7 @@ import {
   saveProfileToLocalStorage,
 } from '~/util/profile.util';
 
-interface IProfile {
+export interface IProfile {
   name: string;
   email: string;
   letter: string;
