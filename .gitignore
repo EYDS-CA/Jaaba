@@ -1,6 +1,8 @@
 node_modules
 
-/server/index.js*
+server/index.js*
+server/package.json
+server/yarn.lock
 /public/build
 preferences.arc
 sam.json
