@@ -10,7 +10,7 @@ import { NavLink } from 'react-router-dom';
 const navLinks = [
   { title: 'Job Search', path: '/search', icon: faSearch },
   { title: 'My Job Applications', path: '/applications', icon: faTableList },
-  { title: 'My Profile', path: '/', icon: faUser },
+  { title: 'My Profile', path: '/profile', icon: faUser },
 ];
 
 export const Nav: React.FC = () => {
