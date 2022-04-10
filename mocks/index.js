@@ -1,2 +1,2 @@
-require("ts-node").register({ transpileOnly: true });
-require("./start");
+require('ts-node').register({ transpileOnly: true });
+require('./start');
