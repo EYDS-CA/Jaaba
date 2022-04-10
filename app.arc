@@ -1,5 +1,5 @@
 @app
-grunge-stack-template
+jaaba2
 
 @http
 /*
@@ -7,6 +7,10 @@ grunge-stack-template
   src server
 
 @static
+
+@aws
+profile default
+region ca-central-1
 
 @tables
 user
