@@ -5,5 +5,6 @@ export * from './Input';
 export * from './Select';
 export * from './SalaryRange';
 export * from './Button';
+export * from './Link';
 //folders
 export * from './search';
