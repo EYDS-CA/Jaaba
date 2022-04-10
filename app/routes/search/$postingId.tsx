@@ -14,11 +14,11 @@ const JiraDescriptionElement: React.FC<{ jiraElement: any }> = ({
 }) => {
   switch (jiraElement?.type) {
     case 'paragraph':
-      return <p className='mb-7'>{jiraElement.content[0].text}</p>;
+      return <p className='mb-7'>{jiraElement.content[0]?.text}</p>;
     case 'heading':
       return (
         <h1 className='text-xl font-semibold mb-3'>
-          {jiraElement.content[0].text}
+          {jiraElement.content[0]?.text}
         </h1>
       );
     default:
