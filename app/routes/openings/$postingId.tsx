@@ -1,7 +1,16 @@
-import { faAngleRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import {
+  faAngleRight,
+  faArrowLeft,
+  faCheck,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
-import { Form, useLoaderData, useTransition } from '@remix-run/react';
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useTransition,
+} from '@remix-run/react';
 import { Link } from 'react-router-dom';
 import { Button, SalaryRange } from '~/components';
 import type { IJobPosting } from '~/dto/jira-ticket.dto';
@@ -41,10 +50,14 @@ export const action: ActionFunction = async ({ request }) => {
   const parentId = data.get('parentId') ?? '';
   switch (request.method) {
     case 'POST': {
-      return await manager.CreateTicket(
+      const res = await manager.CreateTicket(
         { name, letter, email },
         parentId.toString(),
       );
+      const { key } = await res.json();
+      return {
+        response: `Applied successfully, your reference number is ${key}`,
+      };
     }
   }
 };
@@ -57,6 +70,7 @@ export default function Posting() {
   const user = useOptionalUser();
   const transition = useTransition();
   const ticket = useLoaderData<IJobPosting>();
+  const actionData = useActionData();
 
   const isSubmitting = transition.state === 'submitting';
 
@@ -108,15 +122,23 @@ export default function Posting() {
               <Form method='post'>
                 <input type='hidden' name='parentId' value={ticket.issueId} />
                 <input type='hidden' name='name' value={user.profile?.name} />
+                <input type='hidden' name='email' value={user?.email} />
                 <input
                   type='hidden'
                   name='letter'
                   value={user.profile?.letter}
                 />
-                <input type='hidden' name='email' value={user?.email} />
-                <Button type='submit' loading={isSubmitting}>
-                  Apply now
-                </Button>
+
+                {actionData?.response ? (
+                  <p className='inline rounded bg-green-500 px-2 py-1 text-white'>
+                    <FontAwesomeIcon icon={faCheck} className='mr-2 h-4 w-4' />
+                    {actionData.response}
+                  </p>
+                ) : (
+                  <Button type='submit' loading={isSubmitting}>
+                    Apply now
+                  </Button>
+                )}
               </Form>
             ) : null}
           </div>
@@ -130,22 +152,6 @@ export default function Posting() {
                   </>
                 ),
               )}
-
-              {user ? (
-                <Form method='post' className='flex w-full justify-center'>
-                  <input type='hidden' name='parentId' value={ticket.issueId} />
-                  <input type='hidden' name='parentId' value={ticket.issueId} />
-                  <input type='hidden' name='name' value={user.profile?.name} />
-                  <input
-                    type='hidden'
-                    name='letter'
-                    value={user.profile?.letter}
-                  />
-                  <Button type='submit' loading={isSubmitting}>
-                    Apply now
-                  </Button>
-                </Form>
-              ) : null}
             </>
           ) : null}
         </div>
