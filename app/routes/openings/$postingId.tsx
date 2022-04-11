@@ -147,9 +147,7 @@ export default function Posting() {
             <>
               {ticket.description?.content.map(
                 (element: any, index: number) => (
-                  <>
-                    <JiraDescriptionElement key={index} jiraElement={element} />
-                  </>
+                  <JiraDescriptionElement key={index} jiraElement={element} />
                 ),
               )}
             </>
