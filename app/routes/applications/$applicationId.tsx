@@ -25,14 +25,26 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     typeof params.applicationId === 'string',
     'Application ID should be defined',
   );
-  const application = await manager.GetTicket(params.applicationId);
 
-  return json(application);
+  try {
+    const application = await manager.GetTicket(params.applicationId);
+
+    return json({ application });
+  } catch (err) {
+    return json({
+      application: {
+        issueKey: params.applicationId,
+      },
+      error: `Couldn't find application with id ${params.applicationId}`,
+    });
+  }
 };
 
 // this is a big ugly duplicate file ><
 export default function Application() {
-  const application: IJobPosting = useLoaderData();
+  const { application, error }: { application: IJobPosting; error: string } =
+    useLoaderData();
+
   return (
     <div className='h-full w-full bg-white px-7 pt-4'>
       <p className='text-2xl font-bold'>My Job Applications</p>
@@ -53,42 +65,45 @@ export default function Application() {
           Search
         </button>
       </Form>
-
-      <div className='rounded border text-left'>
-        <table className='w-full table-fixed'>
-          <colgroup>
-            <col width='20%' />
-            <col width='20%' />
-            <col width='15%' />
-            <col width='25%' />
-            <col width='15%' />
-          </colgroup>
-          <thead>
-            <tr>
-              <th className='border-b border-r p-3'>Case Number</th>
-              <th className='border-b border-r p-3'>Job Title</th>
-              <th className='border-b border-r p-3'>Applied On</th>
-              <th className='border-b border-r p-3'>Status</th>
-              <th className='border-b p-3'>Updated On</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr key={application.issueKey}>
-              <td className='border-r p-3'>{application.issueKey}</td>
-              <td className='border-r p-3'>{application.parent?.title}</td>
-              <td className='border-r p-3'>
-                {new Date(application.appliedOn).toLocaleDateString()}
-              </td>
-              <td className='border-r p-3'>
-                <ApplicationStatus status={application.status} />
-              </td>
-              <td className='p-3 '>
-                {new Date(application.lastUpdated).toLocaleDateString()}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      {error ? (
+        <p className='rounded bg-red-200 p-2 text-red-700'>{error}</p>
+      ) : (
+        <div className='rounded border text-left'>
+          <table className='w-full table-fixed'>
+            <colgroup>
+              <col width='20%' />
+              <col width='20%' />
+              <col width='15%' />
+              <col width='25%' />
+              <col width='15%' />
+            </colgroup>
+            <thead>
+              <tr>
+                <th className='border-b border-r p-3'>Case Number</th>
+                <th className='border-b border-r p-3'>Job Title</th>
+                <th className='border-b border-r p-3'>Applied On</th>
+                <th className='border-b border-r p-3'>Status</th>
+                <th className='border-b p-3'>Updated On</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr key={application.issueKey}>
+                <td className='border-r p-3'>{application.issueKey}</td>
+                <td className='border-r p-3'>{application.parent?.title}</td>
+                <td className='border-r p-3'>
+                  {new Date(application.appliedOn).toLocaleDateString()}
+                </td>
+                <td className='border-r p-3'>
+                  <ApplicationStatus status={application.status} />
+                </td>
+                <td className='p-3 '>
+                  {new Date(application.lastUpdated).toLocaleDateString()}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
