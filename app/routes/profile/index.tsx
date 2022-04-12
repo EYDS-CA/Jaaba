@@ -82,6 +82,7 @@ export default function Profile() {
           rows={10}
           name='letter'
           id='letter'
+          required
           defaultValue={user.profile?.letter}
           className='block rounded border border-gray-300 px-2 py-1'
         />
