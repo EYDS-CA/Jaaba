@@ -20,6 +20,7 @@ export interface IJobPosting {
     salaryMin: number;
     salaryMax: number;
     location: string;
+    parentTitle?: string;
   };
   dateCreated: string;
   status: {
@@ -27,6 +28,11 @@ export interface IJobPosting {
     id: string;
   };
   description: any;
+  appliedOn: Date;
+  lastUpdated: Date;
+  parent?: {
+    title: string;
+  };
 }
 
 export class JiraTicket {
@@ -90,6 +96,12 @@ export class JiraTicket {
         salaryMin: parseInt(jsonData.fields?.[CUSTOM_FIELDS.salaryMin]),
         salaryMax: parseInt(jsonData.fields?.[CUSTOM_FIELDS.salaryMax]),
         location: jsonData.fields?.[CUSTOM_FIELDS.location],
+        parentTitle: jsonData.fields?.summary,
+      },
+      appliedOn: jsonData.fields.created,
+      lastUpdated: jsonData.fields.updated,
+      parent: {
+        title: jsonData.fields.parent?.fields.summary,
       },
       dateCreated: jsonData.updated,
       status: {
