@@ -11,8 +11,7 @@ import {
   useLoaderData,
   useTransition,
 } from '@remix-run/react';
-import { Link } from 'react-router-dom';
-import { Button, SalaryRange } from '~/components';
+import { Button, SalaryRange, Link } from '~/components';
 import type { IJobPosting } from '~/dto/jira-ticket.dto';
 import { manager } from '~/managers';
 import invariant from 'tiny-invariant';
@@ -63,7 +62,7 @@ export const action: ActionFunction = async ({ request }) => {
       });
 
       return {
-        response: `Applied successfully, your reference number is ${data.key}`,
+        response: data.key,
       };
     }
   }
@@ -81,21 +80,22 @@ export default function Posting() {
 
   const isSubmitting = transition.state === 'submitting';
 
+  const currentApplicationKey =
+    actionData?.response ||
+    user?.applicationData?.find(
+      (application) => application.openingId === ticket.issueId,
+    )?.applicationKey; // haha messy
+
   return (
     <div className='mb-20 p-3'>
       <p className='flex items-center gap-1 text-gray-500'>
-        <Link to='/openings' className='hover:underline'>
-          Job Search
-        </Link>{' '}
+        <Link to='/openings'>Job Search</Link>{' '}
         <FontAwesomeIcon icon={faAngleRight} className='h-4 w-4' />{' '}
         <span className='font-semibold'>{ticket.title}</span>
       </p>
 
       <div className='flex justify-end '>
-        <Link
-          to='/openings'
-          className='rounded border border-purple-800 py-1 px-2 font-semibold text-purple-800 hover:underline'
-        >
+        <Link to='/openings'>
           <FontAwesomeIcon icon={faArrowLeft} className='mr-2 h-4 w-4' />
           Back to Job Search
         </Link>
@@ -136,29 +136,29 @@ export default function Posting() {
                   value={user.profile?.letter}
                 />
 
-                {actionData?.response ? (
+                {/* haha nested ternaries */}
+                {currentApplicationKey ? (
                   <p className='inline rounded bg-green-500 px-2 py-1 text-white'>
                     <FontAwesomeIcon icon={faCheck} className='mr-2 h-4 w-4' />
-                    {actionData.response}
+                    Applied successfully, your reference number is{' '}
+                    {currentApplicationKey}
                   </p>
-                ) : (
+                ) : user.profile ? (
                   <Button type='submit' loading={isSubmitting}>
                     Apply now
                   </Button>
+                ) : (
+                  <Link variant='solid' to='/profile'>
+                    Update your profile
+                  </Link>
                 )}
               </Form>
             ) : null}
           </div>
 
-          {ticket.description ? (
-            <>
-              {ticket.description?.content.map(
-                (element: any, index: number) => (
-                  <JiraDescriptionElement key={index} jiraElement={element} />
-                ),
-              )}
-            </>
-          ) : null}
+          {ticket.description?.content.map((element: any, index: number) => (
+            <JiraDescriptionElement key={index} jiraElement={element} />
+          ))}
         </div>
       </div>
     </div>
