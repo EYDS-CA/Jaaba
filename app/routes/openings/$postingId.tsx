@@ -17,6 +17,7 @@ import type { IJobPosting } from '~/dto/jira-ticket.dto';
 import { manager } from '~/managers';
 import invariant from 'tiny-invariant';
 import { useOptionalUser } from '~/utils';
+import { addApplicationToProfile } from '~/models/user.server';
 
 const JiraDescriptionElement: React.FC<{ jiraElement: any }> = ({
   jiraElement,
@@ -54,9 +55,15 @@ export const action: ActionFunction = async ({ request }) => {
         { name, letter, email },
         parentId.toString(),
       );
-      const { key } = await res.json();
+      const data = await res.json();
+
+      await addApplicationToProfile(email, {
+        applicationKey: data.key,
+        openingId: parentId.toString(),
+      });
+
       return {
-        response: `Applied successfully, your reference number is ${key}`,
+        response: `Applied successfully, your reference number is ${data.key}`,
       };
     }
   }

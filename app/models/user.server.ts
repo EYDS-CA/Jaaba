@@ -2,6 +2,11 @@ import arc from '@architect/functions';
 import bcrypt from 'bcryptjs';
 import invariant from 'tiny-invariant';
 
+export type ApplicationData = {
+  applicationKey: string;
+  openingId: string;
+};
+
 export type User = {
   id: `email#${string}`;
   email: string;
@@ -9,6 +14,7 @@ export type User = {
     name: string;
     letter: string;
   };
+  applicationData: ApplicationData[];
 };
 export type Password = { password: string };
 
@@ -21,7 +27,12 @@ export async function getUserById(id: User['id']): Promise<User | null> {
 
   const [record] = result.Items;
   if (record) {
-    return { id: record.pk, email: record.email, profile: record.profile };
+    return {
+      id: record.pk,
+      email: record.email,
+      profile: record.profile,
+      applicationData: record.applicationData,
+    };
   }
   return null;
 }
@@ -61,6 +72,28 @@ export async function saveUserProfile({
     },
     ExpressionAttributeValues: {
       ':p': profile,
+    },
+  });
+  return saved;
+}
+
+export async function addApplicationToProfile(
+  email: string,
+  applicationData: ApplicationData,
+): Promise<User> {
+  const db = await arc.tables();
+
+  const saved = await db.user.update({
+    Key: { pk: `email#${email}` },
+    ReturnValues: 'ALL_NEW',
+    UpdateExpression:
+      'SET #AI = list_append(if_not_exists(#AI, :empty_list), :vals)',
+    ExpressionAttributeNames: {
+      '#AI': 'applicationData',
+    },
+    ExpressionAttributeValues: {
+      ':empty_list': [],
+      ':vals': [applicationData],
     },
   });
   return saved;
